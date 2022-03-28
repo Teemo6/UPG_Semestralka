@@ -2,78 +2,102 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Instance třídy {@code VstupDat} představuje jedináčka který čte vstupní soubor a vytváří požadovaný seznam objektů
- * @author Štěpán Faragula 2021-12-09
+ * Instance třídy {@code VstupDat} představuje přepravku, která přečte vstupní soubor a uloží si k sobě potřebná data
+ * @author Štěpán Faragula 28-03-2022
  */
 public class VstupDat{
+    /** Řetězec s cestou k souboru ke čtení */
+    private String cestaSouboru;
 
-    /** Jediná instance tříy {@code VstupDat} */
-    private static final VstupDat INSTANCE = new VstupDat();
+    /**  */
+    private double konstantaG;
+    private double casovySkok;
+    private List<Planeta> seznamPlanet = new ArrayList<>();
 
     /**
-     * Vrací instanci {@code VstupDat}
-     * @return instance jedináčka {@code VstupDat}
+     * Konstruktor třídy {@code VstupDat()}
+     * rovnou přečte a uloží data ze souboru
+     * @param cestaSouboru cesta k souboru na čtení
      */
-    public static VstupDat getInstance(){
-        return INSTANCE;
+    public VstupDat(String cestaSouboru){
+        this.cestaSouboru = cestaSouboru;
+        nactiData();
     }
 
     /**
-     * Načte z textového souboru údaje o všech rozvrhových akcích
-     * a vrátí je jako seznam objektů třídy {@code RozvrhovaAkce}
-     * využívá služeb metody {@code vytvorRozvrhovouAkci()}
-     *
-     * @param celeJmenoSouboru úplné jméno souboru včetně cesty
-     * @return seznam rozvrhových akcí
+     * Vrátí konstantu G
+     * @return konstanta G
      */
-    public List<Planeta> nactiPlanety(String celeJmenoSouboru) {
+    public double getKonstantaG() {
+        return konstantaG;
+    }
+
+    /**
+     * vrátí časový skok
+     * @return časový skok
+     */
+    public double getCasovySkok() {
+        return casovySkok;
+    }
+
+    /**
+     * Vrátí seznam planet
+     * @return seznam planet
+     */
+    public List<Planeta> getSeznamPlanet() {
+        return seznamPlanet;
+    }
+
+    /**
+     * Načte konstanty a seznem planet ze souboru
+     * využívá služeb metod {@code nactiKonstanty()} a {@code vytvorPlanetu()}
+     */
+    private void nactiData() {
         String read;
-        List<Planeta> seznam = new ArrayList<>();
 
         try {
-            FileReader fr = new FileReader(celeJmenoSouboru);
+            FileReader fr = new FileReader(cestaSouboru);
             BufferedReader br = new BufferedReader(fr);
 
-            br.readLine();
+            nactiKonstanty(br.readLine());
 
             while ((read = br.readLine()) != null) {
-                seznam.add(vytvorPlanetu(read));
+                seznamPlanet.add(vytvorPlanetu(read));
             }
-
             br.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return seznam;
     }
 
     /**
-     * Z řetězce, ve kterém je uložena informace o rozvrhové akci, vyrobí
-     * objekt {@code RozvrhovaAkce}
-     * Formát řetězce je:
-     * jméno katedry;jméno předmětu;typ předmětu;semestr
-     * např.:
-     * KAE;CESA;Pr;LS
+     * Z příslušného řetězce přiřadí konstantám hodnoty
      *
-     * @param csvRadek řádek rozvrhové akce - údaje jsou odděleny středníky
-     * @return objekt aktuální RozvrhovaAkce
+     * @param csvRadek řádek s konstantama, čísla oddělena čárkou
      */
-    public Planeta vytvorPlanetu(String csvRadek){
-        Planeta novaPlaneta = null;
+    private void nactiKonstanty(String csvRadek){
         String[] part = csvRadek.split(",");
-        try{
-            novaPlaneta = new Planeta(
-                    part[0],
-                    part[1],
-                    new Pozice(Double.parseDouble(part[2]), Double.parseDouble(part[3])),
-                    new Rychlost(Double.parseDouble(part[4]), Double.parseDouble(part[5])),
-                    Double.parseDouble(part[6])
-            );
-        } catch(Exception e){
-            e.printStackTrace();
-        }
+        konstantaG = Double.parseDouble(part[0]);
+        casovySkok = Double.parseDouble(part[1]);
+    }
 
-        return novaPlaneta;
+    /**
+     * Z příslušného řetězce vyrobí objekt {@code Planeta}
+     *
+     * @param csvRadek řádek planety, údaje odděleny čárkou
+     * @return objekt {@code Planeta}
+     */
+    private Planeta vytvorPlanetu(String csvRadek){
+        String[] part = csvRadek.split(",");
+        return new Planeta(
+                part[0],
+                part[1],
+                Double.parseDouble(part[2]),
+                Double.parseDouble(part[3]),
+                Double.parseDouble(part[4]),
+                Double.parseDouble(part[5]),
+                Double.parseDouble(part[6])
+            );
     }
 }

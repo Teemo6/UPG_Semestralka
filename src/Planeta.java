@@ -1,20 +1,24 @@
 public class Planeta {
     private String nazev;
     private String typ;
-    private Pozice pozice;
-    private Rychlost rychlost;
+    private double posX;
+    private double posY;
+    private double velX;
+    private double velY;
     private double hmotnost;
 
-    public Planeta(String nazev, String typ, Pozice pozice, Rychlost rychlost, double hmotnost){
+    public Planeta(String nazev, String typ, double posX, double posY, double velX, double velY, double hmotnost){
         this.nazev = nazev;
         this.typ = typ;
-        this.pozice = pozice;
-        this.rychlost = rychlost;
+        this.posX = posX;
+        this.posY = posY;
+        this.velX = velX;
+        this.velY = velY;
         this.hmotnost = hmotnost;
     }
 
     @Override
     public String toString(){
-        return "[Nazev: " +nazev+ ", Typ: " +typ+ ", Pozice: " +pozice.toString()+ ", Rychlost: " +rychlost.toString()+ ", Hmotnost: " +hmotnost+ "]";
+        return "[Nazev: " +nazev+ ", Typ: " +typ+ ", Pozice: (" +posX+ ", " +posY+ "), Rychlost: (" +velX+ ", " +velY+ "), Hmotnost: " +hmotnost+ "]";
     }
 }

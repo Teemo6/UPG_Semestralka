@@ -1,22 +1,13 @@
-import java.util.List;
-
 public class Galaxy_SP2022 {
 
-
-	/**
-	 * Precte data na zpracovani a zapise zpracovana data do souboru podle volby
-	 * @param vstupniSoubor jaky soubor se ma cist
-	 */
-	private static void zpracujDataAZapisVysledky(String vstupniSoubor){
-		VstupDat vstupDat = VstupDat.getInstance();
-		List<Planeta> seznam = vstupDat.nactiPlanety(vstupniSoubor);
-
-		for(Planeta planeta : seznam){
-			System.out.println(planeta);
-		}
-	}
+	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
+	private static final VstupDat VSTUP_DAT = new VstupDat(VSTUP_SOUBORU);
 
 	public static void main(String[] args) {
-		zpracujDataAZapisVysledky("data/pulsar.csv");
+		System.out.println(VSTUP_DAT.getKonstantaG());
+		System.out.println(VSTUP_DAT.getCasovySkok());
+		for(Planeta p : VSTUP_DAT.getSeznamPlanet()){
+			System.out.println(p);
+		}
 	}
 }
