@@ -1,11 +1,11 @@
 public class Planeta {
-    private String nazev;
-    private String typ;
-    private double posX;
-    private double posY;
-    private double velX;
-    private double velY;
-    private double hmotnost;
+    public String nazev;
+    public String typ;
+    public double posX;
+    public double posY;
+    public double velX;
+    public double velY;
+    public double hmotnost;
 
     public Planeta(String nazev, String typ, double posX, double posY, double velX, double velY, double hmotnost){
         this.nazev = nazev;
