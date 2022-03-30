@@ -1,30 +1,38 @@
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
 import java.util.List;
 import javax.swing.*;
 
 public class VizualizaceVesmiru extends JPanel {
 
-	double[] world_x = {0, 800, 800, 0};
-	double[] world_y = {0, 0, 600, 600};
+	private List<Planeta> seznamPlanet;
 
 	double x_min, x_max, y_min, y_max;
 	double world_width, world_height;
 
-	private List<Planeta> seznamPlanet;
-
 	public VizualizaceVesmiru(List<Planeta> seznamPlanet) {
-		this.seznamPlanet = seznamPlanet;
 		this.setPreferredSize(new Dimension(800, 600));
+		this.seznamPlanet = seznamPlanet;
+	}
 
-		x_min = 0;
-		x_max = 800;
-		y_min = 0;
-		y_max = 600;
+	private void setSpaceScale(){
+		x_min = Double.MAX_VALUE;
+		x_max = 0;
+		y_min = Double.MAX_VALUE;
+		y_max = 0;
 
 		for(Planeta p : seznamPlanet){
+			double levyOkrajX = p.posX;
+			double pravyOkrajX = p.posX + p.hmotnost;
+			double horniOkrajY = p.posY;
+			double dolniOkrajY = p.posY + p.hmotnost;
 
+			x_min = Math.min(levyOkrajX, x_min);
+			x_max = Math.max(pravyOkrajX, x_max);
+			y_min = Math.min(horniOkrajY, y_min);
+			y_max = Math.max(dolniOkrajY, y_max);
 		}
 
 		world_width = x_max - x_min;
@@ -34,28 +42,32 @@ public class VizualizaceVesmiru extends JPanel {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
+		Graphics2D g2 = (Graphics2D)g;
 
+		setSpaceScale();
+
+		// Scaling
 		double scale_x = this.getWidth() / world_width;
 		double scale_y = this.getHeight() / world_height;
 		double scale = Math.min(scale_x, scale_y);
+		g2.translate(this.getWidth()/2,this.getHeight()/2);
+		g2.scale(scale, scale);
+		g2.translate(-world_width/2,-world_height/2);
 
-		Graphics2D g2 = (Graphics2D)g;
-
+		// Pozadi
 		g.setColor(Color.lightGray);
 		Path2D objekt = new Path2D.Double();
-		objekt.moveTo((world_x[0] - x_min) * scale, (world_y[0] - y_min) * scale);
-
-		for (int i = 1; i < world_x.length; i++) {
-			objekt.lineTo((world_x[i] - x_min) * scale, (world_y[i] - y_min) * scale);
-		}
+		objekt.moveTo(0, 0);
+		objekt.lineTo(world_width, 0);
+		objekt.lineTo(world_width, world_height);
+		objekt.lineTo(0, world_height);
 		objekt.closePath();
 		g2.fill(objekt);
 
-
+		// Planety
 		g2.setColor(Color.BLACK);
-
 		for(Planeta p : seznamPlanet){
-			g2.fill(new Ellipse2D.Double(p.posX, p.posY, p.hmotnost * scale, p.hmotnost * scale));
+			g2.fill(new Ellipse2D.Double(p.posX - x_min, p.posY - y_min, p.hmotnost, p.hmotnost));
 		}
 	}
 }

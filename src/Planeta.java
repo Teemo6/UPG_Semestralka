@@ -17,6 +17,10 @@ public class Planeta {
         this.hmotnost = hmotnost;
     }
 
+    public double[] getCenterPos(){
+        return new double[]{posX + hmotnost/2, posY + hmotnost/2};
+    }
+
     @Override
     public String toString(){
         return "[Nazev: " +nazev+ ", Typ: " +typ+ ", Pozice: (" +posX+ ", " +posY+ "), Rychlost: (" +velX+ ", " +velY+ "), Hmotnost: " +hmotnost+ "]";
