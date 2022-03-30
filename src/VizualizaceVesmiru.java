@@ -46,7 +46,6 @@ public class VizualizaceVesmiru extends JPanel {
 			y_min = Math.min(horniOkrajY, y_min);
 			y_max = Math.max(dolniOkrajY, y_max);
 		}
-
 		world_width = x_max - x_min;
 		world_height = y_max - y_min;
 	}
