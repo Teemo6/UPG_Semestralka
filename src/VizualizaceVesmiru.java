@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Path2D;
@@ -15,6 +16,17 @@ public class VizualizaceVesmiru extends JPanel {
 	public VizualizaceVesmiru(List<Planeta> seznamPlanet) {
 		this.setPreferredSize(new Dimension(800, 600));
 		this.seznamPlanet = seznamPlanet;
+	}
+
+	private void setTimeLabel(Graphics2D g2){
+		g2.translate(0, 0);
+		g2.setFont(new Font("Calibri", Font.PLAIN, 15));
+		int textWidth = g2.getFontMetrics().stringWidth("Simulacni cas: 0.0000" + " ");
+		int textHeight = g2.getFontMetrics().getHeight();
+		g2.setColor(Color.WHITE);
+		g2.drawString("Simulacni cas: 0.0000", this.getWidth() - textWidth + 1, textHeight + 1);
+		g2.setColor(Color.BLACK);
+		g2.drawString("Simulacni cas: 0.0000", this.getWidth() - textWidth, textHeight);
 	}
 
 	private void setSpaceScale(){
@@ -45,6 +57,7 @@ public class VizualizaceVesmiru extends JPanel {
 		Graphics2D g2 = (Graphics2D)g;
 
 		setSpaceScale();
+		AffineTransform oldTransform = g2.getTransform();
 
 		// Scaling
 		double scale_x = this.getWidth() / world_width;
@@ -55,7 +68,7 @@ public class VizualizaceVesmiru extends JPanel {
 		g2.translate(-world_width/2,-world_height/2);
 
 		// Pozadi
-		g.setColor(Color.lightGray);
+		g2.setColor(Color.lightGray);
 		Path2D objekt = new Path2D.Double();
 		objekt.moveTo(0, 0);
 		objekt.lineTo(world_width, 0);
@@ -69,5 +82,8 @@ public class VizualizaceVesmiru extends JPanel {
 		for(Planeta p : seznamPlanet){
 			g2.fill(new Ellipse2D.Double(p.posX - x_min, p.posY - y_min, p.hmotnost, p.hmotnost));
 		}
+
+		g2.setTransform(oldTransform);
+		setTimeLabel(g2);
 	}
 }
