@@ -9,7 +9,7 @@ public class VstupDat{
     /** Řetězec s cestou k souboru ke čtení */
     private String cestaSouboru;
 
-    /**  */
+    /** Načtené hodnoty */
     private double konstantaG;
     private double casovySkok;
     private List<Planeta> seznamPlanet = new ArrayList<>();

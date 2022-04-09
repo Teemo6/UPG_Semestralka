@@ -6,6 +6,7 @@ public class Planeta {
     public double velX;
     public double velY;
     public double hmotnost;
+    public double polomer;
 
     public double accX;
     public double accY;
@@ -18,37 +19,14 @@ public class Planeta {
         this.velX = velX;
         this.velY = velY;
         this.hmotnost = hmotnost;
+        this.polomer = Math.cbrt(6*hmotnost/Math.PI)/2;
         this.accX = 0;
         this.accY = 0;
     }
 
-    public void setAcc(double accX, double accY){
+    public void setAcceleration(double accX, double accY){
         this.accX = accX;
         this.accY = accY;
-    }
-
-    public double[] getCenterPos(){
-        return new double[]{posX + hmotnost/2, posY + hmotnost/2};
-    }
-
-    public double getPosX(){
-        return posX - hmotnost/2;
-    }
-
-    public double getPosY(){
-        return posY - hmotnost/2;
-    }
-
-    public double getPosXRaw(){
-        return posX;
-    }
-
-    public double getPosYRaw(){
-        return posY;
-    }
-
-    public double getHmotnost() {
-        return hmotnost;
     }
 
     @Override
