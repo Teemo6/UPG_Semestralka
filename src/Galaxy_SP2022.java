@@ -3,26 +3,25 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Galaxy_SP2022 {
 
 	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
-	private static VstupDat VSTUP_DAT;
+	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 	private static long startTime = System.currentTimeMillis();
-	private static boolean simulationRunning = true;
 
 	public static void vytvorOknoVizualizace(){
 		JFrame okno = new JFrame();
-		okno.setTitle("Vesmir");
+		okno.setTitle("A21B0119P - Stepan Faragula");
 		okno.setSize(800, 600);
 
-		VizualizaceVesmiru vesmir = new VizualizaceVesmiru(VSTUP_DAT, startTime);
+		Simulace simulaceVesmiru = new Simulace(VSTUP_DAT.getSeznamPlanet(), VSTUP_DAT.getCasovySkok(), VSTUP_DAT.getKonstantaG());
+		Vizualizace vizualizaceVesmiru = new Vizualizace(VSTUP_DAT.getSeznamPlanet(), startTime);
 
-		okno.add(vesmir); //prida komponentu
-		okno.pack(); //udela resize okna dle komponent
+		okno.add(vizualizaceVesmiru);
+		okno.pack();
 
 		okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		okno.setLocationRelativeTo(null); //vycentrovat na obrazovce
@@ -33,11 +32,11 @@ public class Galaxy_SP2022 {
 			@Override
 			public void run() {
 				long currentTime = System.currentTimeMillis();
-				vesmir.simulationTime += VSTUP_DAT.getCasovySkok();
+				vizualizaceVesmiru.simulationTime += VSTUP_DAT.getCasovySkok();
 
-				if(simulationRunning){
-					vesmir.updateSystem(VSTUP_DAT.getCasovySkok());
-					vesmir.repaint();
+				if(simulaceVesmiru.isSimulationRunning()){
+					simulaceVesmiru.updateSystem(4);
+					vizualizaceVesmiru.repaint();
 				}
 
 				startTime = System.currentTimeMillis();
@@ -49,32 +48,28 @@ public class Galaxy_SP2022 {
 					public boolean dispatchKeyEvent(KeyEvent e) {
 						if (e.getID() == KeyEvent.KEY_PRESSED
 								&& e.getKeyCode() == KeyEvent.VK_SPACE) {
-							runPauseSimulation();
+							simulaceVesmiru.runPauseSimulation();
 						}
 
 						return false;
 					}
 				});
 
-		vesmir.addMouseListener(new MouseAdapter() {
+		vizualizaceVesmiru.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(vesmir.isPlanetHit(e.getX(), e.getY())){
-					System.out.println("ahoj");
+				Planeta planetHit = vizualizaceVesmiru.getHitPlanet(e.getX(), e.getY());
+				if(planetHit != null){
+					vizualizaceVesmiru.showSelectedPlanet(planetHit);
 				}
 			}
 
 		});
 	}
 
-	public static void runPauseSimulation(){
-		simulationRunning = !simulationRunning;
-	}
-
 	public static void main(String[] args) {
-		//VSTUP_DAT = new VstupDat(args[0]);
-		VSTUP_DAT = new VstupDat(VSTUP_SOUBORU);
-
+		//VSTUP_DAT.nactiData(args[0]);
+		VSTUP_DAT.nactiData(VSTUP_SOUBORU);
 		vytvorOknoVizualizace();
 	}
 }

@@ -2,26 +2,24 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Instance třídy {@code VstupDat} představuje přepravku, která přečte vstupní soubor a uloží si k sobě potřebná data
+ * Instance třídy {@code VstupDat} představuje jedináčka, který umí přečíst vstupní soubor a vybrat potřebná data
  * @author Štěpán Faragula 28-03-2022
  */
 public class VstupDat{
-    /** Řetězec s cestou k souboru ke čtení */
-    private String cestaSouboru;
+    /** Instance jedináčka */
+    private static final VstupDat INSTANCE = new VstupDat();
 
     /** Načtené hodnoty */
     private double konstantaG;
     private double casovySkok;
-    private List<Planeta> seznamPlanet = new ArrayList<>();
+    private List<Planeta> seznamPlanet;
 
     /**
-     * Konstruktor třídy {@code VstupDat()}
-     * rovnou přečte a uloží data ze souboru
-     * @param cestaSouboru cesta k souboru na čtení
+     * Vrátí instanci {@code VstupDat}
+     * @return instance jedináčka
      */
-    public VstupDat(String cestaSouboru){
-        this.cestaSouboru = cestaSouboru;
-        nactiData();
+    public static VstupDat getInstance(){
+        return INSTANCE;
     }
 
     /**
@@ -51,12 +49,15 @@ public class VstupDat{
     /**
      * Načte konstanty a seznem planet ze souboru
      * využívá služeb metod {@code nactiKonstanty()} a {@code vytvorPlanetu()}
+     *
+     * @param vstupniSoubor soubor k načtení
      */
-    private void nactiData() {
+    public void nactiData(String vstupniSoubor) {
+        seznamPlanet = new ArrayList<>();
         String read;
 
         try {
-            FileReader fr = new FileReader(cestaSouboru);
+            FileReader fr = new FileReader(vstupniSoubor);
             BufferedReader br = new BufferedReader(fr);
 
             nactiKonstanty(br.readLine());
@@ -72,31 +73,29 @@ public class VstupDat{
     }
 
     /**
-     * Z příslušného řetězce přiřadí konstantám hodnoty
+     * Z příslušného řetězce získá hodnoy kosntant
      *
      * @param csvRadek řádek s konstantama, čísla oddělena čárkou
      */
-    private void nactiKonstanty(String csvRadek){
+    public void nactiKonstanty(String csvRadek){
         String[] part = csvRadek.split(",");
         konstantaG = Double.parseDouble(part[0]);
         casovySkok = Double.parseDouble(part[1]);
     }
 
     /**
-     * Z příslušného řetězce vyrobí objekt {@code Planeta}
+     * Z příslušného řetězce vytvoří instanci třídy {@code Planeta}
      *
      * @param csvRadek řádek planety, údaje odděleny čárkou
-     * @return objekt {@code Planeta}
+     * @return isntance třídy {@code Planeta}
      */
-    private Planeta vytvorPlanetu(String csvRadek){
+    public Planeta vytvorPlanetu(String csvRadek){
         String[] part = csvRadek.split(",");
         return new Planeta(
                 part[0],
                 part[1],
-                Double.parseDouble(part[2]),
-                Double.parseDouble(part[3]),
-                Double.parseDouble(part[4]),
-                Double.parseDouble(part[5]),
+                new DoubleVector2D(Double.parseDouble(part[2]), Double.parseDouble(part[3])),
+                new DoubleVector2D(Double.parseDouble(part[4]), Double.parseDouble(part[5])),
                 Double.parseDouble(part[6])
             );
     }
