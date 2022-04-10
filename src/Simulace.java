@@ -2,11 +2,13 @@ import java.util.List;
 
 public class Simulace {
     public static double maxVzdalenost;
+    public long simulacniCas;
+    public long starySimulacniCas;
 
     private List<Planeta> seznamPlanet;
     private final double casovySkok;
     private final double konstantaG;
-    private boolean simulationRunning = false;
+    private boolean simulationRunning = true;
 
     public Simulace(List<Planeta> seznamPlanet, double casovySkok, double konstantaG){
         this.seznamPlanet = seznamPlanet;
@@ -16,7 +18,7 @@ public class Simulace {
 
     public void updateSystem(double t){
         double velocityX, velocityY, positionX, positionY;
-        double dt_min = 0.02;
+        double dt_min = casovySkok/1000000;
 
         while(t > 0){
             double dt = Math.min(t, dt_min);

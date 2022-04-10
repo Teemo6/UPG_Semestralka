@@ -10,7 +10,7 @@ public class Galaxy_SP2022 {
 
 	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
-	private static long startTime = System.currentTimeMillis();
+	private static long startTime;
 
 	public static void vytvorOknoVizualizace(){
 		JFrame okno = new JFrame();
@@ -27,19 +27,21 @@ public class Galaxy_SP2022 {
 		okno.setLocationRelativeTo(null);
 		okno.setVisible(true);
 
+		startTime = System.currentTimeMillis();
+
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
 				long currentTime = System.currentTimeMillis();
-				vizualizaceVesmiru.simulationTime += VSTUP_DAT.getCasovySkok();
-
 				if(simulaceVesmiru.isSimulationRunning()){
-					simulaceVesmiru.updateSystem(4);
+					simulaceVesmiru.simulacniCas = currentTime - startTime;
+					simulaceVesmiru.updateSystem(VSTUP_DAT.getCasovySkok() * ((simulaceVesmiru.simulacniCas - simulaceVesmiru.starySimulacniCas))/1000.0);
+					simulaceVesmiru.starySimulacniCas = simulaceVesmiru.simulacniCas;
+
+					vizualizaceVesmiru.setSimulationTime(simulaceVesmiru.simulacniCas);
 					vizualizaceVesmiru.repaint();
 				}
-
-				startTime = System.currentTimeMillis();
 			}
 		}, 0, 20);
 
@@ -70,7 +72,6 @@ public class Galaxy_SP2022 {
 	public static void main(String[] args) {
 		//VSTUP_DAT.nactiData(args[0]);
 		VSTUP_DAT.nactiData(VSTUP_SOUBORU);
-
 		vytvorOknoVizualizace();
 	}
 }

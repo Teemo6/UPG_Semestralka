@@ -23,6 +23,10 @@ public class Vizualizace extends JPanel {
 		this.seznamPlanet = seznamPlanet;
 	}
 
+	public void setSimulationTime(long t){
+		simulationTime = t;
+	}
+
 	private void setSpaceBorder(){
 		x_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusX).toList());
 		x_max = Collections.max(seznamPlanet.stream().map(Planeta::getPositiveRadiusX).toList());
@@ -116,11 +120,10 @@ public class Vizualizace extends JPanel {
 		repaint();
 	}
 
+	// !! METODA FUNGUJE POUZE NA ZVĚTŠENÍ APLIKACÍ NA 100% !!
 	public Planeta getHitPlanet(double x, double y) {
 		Point2D click = new Point2D.Double(x, y);
 		Point2D clickTransformed = new Point2D.Double();
-
-		AffineTransform megaTransform = (AffineTransform) miniTransform.clone();
 
 		try {
 			miniTransform.invert();
