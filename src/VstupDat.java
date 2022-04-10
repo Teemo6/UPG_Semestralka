@@ -15,7 +15,6 @@ public class VstupDat{
     private List<Planeta> seznamPlanet;
 
     /**
-     * Vrátí instanci {@code VstupDat}
      * @return instance jedináčka
      */
     public static VstupDat getInstance(){
@@ -23,7 +22,6 @@ public class VstupDat{
     }
 
     /**
-     * Vrátí konstantu G
      * @return konstanta G
      */
     public double getKonstantaG() {
@@ -31,7 +29,6 @@ public class VstupDat{
     }
 
     /**
-     * vrátí časový skok
      * @return časový skok
      */
     public double getCasovySkok() {
@@ -39,7 +36,6 @@ public class VstupDat{
     }
 
     /**
-     * Vrátí seznam planet
      * @return seznam planet
      */
     public List<Planeta> getSeznamPlanet() {
@@ -47,7 +43,7 @@ public class VstupDat{
     }
 
     /**
-     * Načte konstanty a seznem planet ze souboru
+     * Načte konstanty a vytvoří planety ze souboru
      * využívá služeb metod {@code nactiKonstanty()} a {@code vytvorPlanetu()}
      *
      * @param vstupniSoubor soubor k načtení
@@ -73,9 +69,8 @@ public class VstupDat{
     }
 
     /**
-     * Z příslušného řetězce získá hodnoy kosntant
-     *
-     * @param csvRadek řádek s konstantama, čísla oddělena čárkou
+     * Z příslušného řetězce si uloží hodnoy kosntant
+     * @param csvRadek {@code String} s konstantama, dvě čísla oddělena čárkou
      */
     public void nactiKonstanty(String csvRadek){
         String[] part = csvRadek.split(",");
@@ -84,10 +79,9 @@ public class VstupDat{
     }
 
     /**
-     * Z příslušného řetězce vytvoří instanci třídy {@code Planeta}
-     *
-     * @param csvRadek řádek planety, údaje odděleny čárkou
-     * @return isntance třídy {@code Planeta}
+     * Z příslušného řetězce vytvoří instanci {@code Planeta}
+     * @param csvRadek {@code String} s planetou, údaje odděleny čárkou
+     * @return isntance {@code Planeta}
      */
     public Planeta vytvorPlanetu(String csvRadek){
         String[] part = csvRadek.split(",");

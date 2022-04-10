@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.*;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.*;
 
@@ -14,37 +15,26 @@ public class Vizualizace extends JPanel {
 	double scale;
 
 	double x_min, x_max, y_min, y_max;
-	double world_width, world_height;
-
-	double maxVzdalenost;
+	double space_width, space_height;
 
 	public Vizualizace(List<Planeta> seznamPlanet, long startTime) {
 		this.setPreferredSize(new Dimension(800, 600));
 		this.startTime = startTime;
 		this.seznamPlanet = seznamPlanet;
-
-		maxVzdalenost = seznamPlanet.get(0).getPositionVector().computeDistance(seznamPlanet.get(1).getPositionVector());
 	}
 
-	private void createWorld(){
-		x_min = Double.MAX_VALUE;
-		x_max = 0;
-		y_min = Double.MAX_VALUE;
-		y_max = 0;
+	private void setSpaceBorder(){
+		x_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusX).toList());
+		x_max = Collections.max(seznamPlanet.stream().map(Planeta::getPositiveRadiusX).toList());
+		y_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusY).toList());
+		y_max = Collections.max(seznamPlanet.stream().map(Planeta::getPositiveRadiusY).toList());
 
-		for(Planeta p : seznamPlanet){
-			double minimumX = p.getPositionX() - p.getRadius();
-			double maximumX = p.getPositionX() + p.getRadius();
-			double minimumY = p.getPositionY() - p.getRadius();
-			double maximumY = p.getPositionY() + p.getRadius();
+		space_width = x_max - x_min;
+		space_height = y_max - y_min;
 
-			x_min = Math.min(minimumX, x_min);
-			x_max = Math.max(maximumX, x_max);
-			y_min = Math.min(minimumY, y_min);
-			y_max = Math.max(maximumY, y_max);
-		}
-		world_width = x_max - x_min;
-		world_height = y_max - y_min;
+		double scale_x = this.getWidth() / space_width;
+		double scale_y = this.getHeight() / space_height;
+		scale = Math.min(scale_x, scale_y);
 	}
 
 	@Override
@@ -52,23 +42,20 @@ public class Vizualizace extends JPanel {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D)g;
 
-		createWorld();
-		AffineTransform oldTransform = g2.getTransform();
-
 		// Scaling
-		double scale_x = this.getWidth() / world_width;
-		double scale_y = this.getHeight() / world_height;
-		scale = Math.min(scale_x, scale_y);
+		setSpaceBorder();
+		AffineTransform oldTransform = g2.getTransform();
 
 		g2.translate(this.getWidth()/2,this.getHeight()/2);
 		g2.scale(scale, scale);
-		g2.translate(-world_width/2,-world_height/2);
+		g2.translate(-space_width /2,-space_height /2);
+		g2.translate(-x_min,-y_min);
 
 		miniTransform = g2.getTransform();
 
-		// Pozadi se scale
+		// Pozadi plochy
 		g2.setColor(Color.lightGray);
-		Rectangle2D background = new Rectangle2D.Double(0, 0, world_width, world_height);
+		Rectangle2D background = new Rectangle2D.Double(x_min, y_min, space_width, space_height);
 		g2.fill(background);
 
 		// Planety
@@ -78,7 +65,7 @@ public class Vizualizace extends JPanel {
 		// Planeta oznacena
 		if(selectedPlanet != null) {
 			g2.setColor(Color.GRAY);
-			g2.fill(new Ellipse2D.Double(selectedPlanet.getPositionX() - selectedPlanet.getRadius() - x_min, selectedPlanet.getPositionY() - selectedPlanet.getRadius() - y_min, 2 * selectedPlanet.getRadius(), 2 * selectedPlanet.getRadius()));
+			g2.fill(new Ellipse2D.Double(selectedPlanet.getNegativeRadiusX(), selectedPlanet.getNegativeRadiusY(), 2 * selectedPlanet.getRadius(), 2 * selectedPlanet.getRadius()));
 		}
 
 		// Label
@@ -122,9 +109,7 @@ public class Vizualizace extends JPanel {
 	}
 
 	public void drawPlanets(Graphics2D g2){
-		seznamPlanet.forEach(p ->
-				g2.fill(new Ellipse2D.Double(p.getPositionX() - p.getRadius() - x_min, p.getPositionY() - p.getRadius() - y_min, 2*p.getRadius(), 2*p.getRadius()))
-		);
+		seznamPlanet.forEach(p -> g2.fill(new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2*p.getRadius(), 2*p.getRadius())));
 	}
 
 	public void showSelectedPlanet(Planeta planeta){
@@ -138,15 +123,15 @@ public class Vizualizace extends JPanel {
 		AffineTransform megaTransform = (AffineTransform) miniTransform.clone();
 
 		try {
-			megaTransform.invert();
+			miniTransform.invert();
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
 
-		megaTransform.transform(click, clickTransformed);
+		miniTransform.transform(click, clickTransformed);
 
 		for(Planeta p : seznamPlanet){
-			Ellipse2D elipsa = new Ellipse2D.Double(p.getPositionX() - p.getRadius() - x_min, p.getPositionY() - p.getRadius() - y_min, 2*p.getRadius(), 2*p.getRadius());
+			Ellipse2D elipsa = new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2*p.getRadius(), 2*p.getRadius());
 
 			if(elipsa.contains(clickTransformed.getX(), clickTransformed.getY())){
 				selectedPlanet = p;

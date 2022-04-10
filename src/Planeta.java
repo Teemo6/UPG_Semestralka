@@ -35,6 +35,22 @@ public class Planeta {
         return position.getY();
     }
 
+    public double getNegativeRadiusX(){
+        return position.getX() - radius;
+    }
+
+    public double getPositiveRadiusX(){
+        return position.getX() + radius;
+    }
+
+    public double getNegativeRadiusY(){
+        return position.getY() - radius;
+    }
+
+    public double getPositiveRadiusY(){
+        return position.getY() + radius;
+    }
+
     public DoubleVector2D getPositionVector() {
         return position;
     }
