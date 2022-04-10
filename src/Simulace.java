@@ -15,7 +15,8 @@ public class Simulace {
     }
 
     public void updateSystem(double t){
-        double dt_min = t/100 * casovySkok;
+        double velocityX, velocityY, positionX, positionY;
+        double dt_min = 0.02;
 
         while(t > 0){
             double dt = Math.min(t, dt_min);
@@ -24,10 +25,18 @@ public class Simulace {
 
             for(Planeta p : seznamPlanet){
                 //computeAcc(seznamPlanet, vstupDat.getKonstantaG());
-                p.setVelocity(0.5 * dt * p.getAccelerationX(), 0.5 * dt * p.getAccelerationY());
-                p.setPosition(dt * p.getVelocityX(), dt * p.getVelocityY());
+                velocityX = p.getVelocityX() + 0.5 * dt * p.getAccelerationX();
+                velocityY = p.getVelocityY() + 0.5 * dt * p.getAccelerationY();
+                p.setVelocity(velocityX, velocityY);
+
+                positionX = p.getPositionX() + dt * p.getVelocityX();
+                positionY = p.getPositionY() + dt * p.getVelocityY();
+                p.setPosition(positionX, positionY);
                 //computeAcc(seznamPlanet, vstupDat.getKonstantaG());
-                p.setVelocity(0.5 * dt * p.getAccelerationX(), 0.5 * dt * p.getAccelerationY());
+
+                velocityX = p.getVelocityX() + 0.5 * dt * p.getAccelerationX();
+                velocityY = p.getVelocityY() + 0.5 * dt * p.getAccelerationY();
+                p.setVelocity(velocityX, velocityY);
             }
             t -= dt;
         }
@@ -56,14 +65,14 @@ public class Simulace {
 
                 //System.out.println(maxVzdalenost);
             }
-			/*
+/*
 			if(Double.isNaN(zrychleniX)){
 				zrychleniX = 0;
 			}
 			if(Double.isNaN(zrychleniY)){
 				zrychleniY = 0;
 			}
-			 */
+*/
             zrychleniX *= G;
             zrychleniY *= G;
 

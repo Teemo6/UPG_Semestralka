@@ -8,8 +8,8 @@ public class DoubleVector2D {
     }
 
     public double computeDistance(DoubleVector2D otherVector){
-        double posXDiff = otherVector.getX() - this.getX();
-        double posYDiff = otherVector.getY() - this.getY();
+        double posXDiff = otherVector.getX() - this.x;
+        double posYDiff = otherVector.getY() - this.y;
         return Math.sqrt(posXDiff * posXDiff + posYDiff * posYDiff);
     }
 

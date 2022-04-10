@@ -71,12 +71,8 @@ public class Planeta {
         return acceleration.getY();
     }
 
-    public void setAcceleration(double accX, double accY){
-        this.acceleration = new DoubleVector2D(accX, accY);
-    }
-
-    public void setAcceleration(DoubleVector2D acc){
-        this.acceleration = acc;
+    public void setAcceleration(double x, double y){
+        this.acceleration = new DoubleVector2D(x, y);
     }
 
     @Override

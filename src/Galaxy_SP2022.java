@@ -70,6 +70,27 @@ public class Galaxy_SP2022 {
 	public static void main(String[] args) {
 		//VSTUP_DAT.nactiData(args[0]);
 		VSTUP_DAT.nactiData(VSTUP_SOUBORU);
+/*
+		Planeta a = VSTUP_DAT.getSeznamPlanet().get(0);
+		Planeta b = VSTUP_DAT.getSeznamPlanet().get(1);
+
+		System.out.println(a.getPositionVector().computeDistance(b.getPositionVector()));
+		System.out.println(a);
+
+		a.setAcceleration(10, 5);
+		a.setPosition(10, 5);
+		a.setVelocity(10, 5);
+
+		System.out.println(a);
+		System.out.println(a.getPositionX());
+		System.out.println(a.getPositionY());
+		System.out.println(a.getVelocityX());
+		System.out.println(a.getVelocityY());
+		System.out.println(a.getAccelerationX());
+		System.out.println(a.getAccelerationY());
+
+		System.out.println(a.getPositionVector().computeDistance(b.getPositionVector()));
+*/
 		vytvorOknoVizualizace();
 	}
 }
