@@ -37,25 +37,10 @@ public class DoubleVector2D {
     }
 
     /**
-     * @param x nastaví x
-     */
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    /**
      * @return y
      */
     public double getY() {
         return y;
-    }
-
-
-    /**
-     * @param y nastaví y
-     */
-    public void setY(double y) {
-        this.y = y;
     }
 
     /**

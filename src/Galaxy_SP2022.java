@@ -3,14 +3,11 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class Galaxy_SP2022 {
 
 	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
-	private static long startTime;
 
 	public static void vytvorOknoVizualizace(){
 		JFrame okno = new JFrame();
@@ -18,7 +15,7 @@ public class Galaxy_SP2022 {
 		okno.setSize(800, 600);
 
 		Simulace simulaceVesmiru = new Simulace(VSTUP_DAT.getSeznamPlanet(), VSTUP_DAT.getCasovySkok(), VSTUP_DAT.getKonstantaG());
-		Vizualizace vizualizaceVesmiru = new Vizualizace(VSTUP_DAT.getSeznamPlanet(), startTime);
+		Vizualizace vizualizaceVesmiru = new Vizualizace(VSTUP_DAT.getSeznamPlanet());
 
 		okno.add(vizualizaceVesmiru);
 		okno.pack();
@@ -27,35 +24,15 @@ public class Galaxy_SP2022 {
 		okno.setLocationRelativeTo(null);
 		okno.setVisible(true);
 
-		startTime = System.currentTimeMillis();
+		SimulationTimer timer = new SimulationTimer(simulaceVesmiru, vizualizaceVesmiru, VSTUP_DAT.getCasovySkok());
 
-		Timer timer = new Timer();
-		timer.schedule(new TimerTask() {
-			@Override
-			public void run() {
-				long currentTime = System.currentTimeMillis();
-				if(simulaceVesmiru.isSimulationRunning()){
-					simulaceVesmiru.simulacniCas = currentTime - startTime;
-					simulaceVesmiru.updateSystem(VSTUP_DAT.getCasovySkok() * ((simulaceVesmiru.simulacniCas - simulaceVesmiru.starySimulacniCas))/1000.0);
-					simulaceVesmiru.starySimulacniCas = simulaceVesmiru.simulacniCas;
-
-					vizualizaceVesmiru.setSimulationTime(simulaceVesmiru.simulacniCas);
-					vizualizaceVesmiru.repaint();
-				}
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+			if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_SPACE) {
+				timer.runPauseSimulation();
 			}
-		}, 0, 20);
 
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-					@Override
-					public boolean dispatchKeyEvent(KeyEvent e) {
-						if (e.getID() == KeyEvent.KEY_PRESSED
-								&& e.getKeyCode() == KeyEvent.VK_SPACE) {
-							simulaceVesmiru.runPauseSimulation();
-						}
-
-						return false;
-					}
-				});
+			return false;
+		});
 
 		vizualizaceVesmiru.addMouseListener(new MouseAdapter() {
 			@Override
