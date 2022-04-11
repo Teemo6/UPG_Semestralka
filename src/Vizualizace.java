@@ -6,25 +6,25 @@ import javax.swing.*;
 
 /**
  * Instance třídy {@code Vizualizace} představuje plátno na kreslení vesmíru
- * @author Štěpán Faragula 01-04-2022
+ * @author Štěpán Faragula 31-03-2022
  */
 public class Vizualizace extends JPanel {
 
-	/** Simulační čas */
+	/** Simulační čas v milisekudnách*/
 	public long simulationTime;
 
 	private List<Planeta> seznamPlanet;
 	private Planeta selectedPlanet;
 	private AffineTransform miniTransform;
 
-	/** Všechno potřebné na scaling */
+	// Všechno potřebné na scaling
 	private double x_min, x_max, y_min, y_max;
 	private double space_width, space_height;
 	private double scale;
 
 	/**
-	 * Nastaví seznam planet, velikost okna
-	 * @param seznamPlanet
+	 * Nastaví seznam planet a velikost okna
+	 * @param seznamPlanet seznam planet
 	 */
 	public Vizualizace(List<Planeta> seznamPlanet) {
 		this.setPreferredSize(new Dimension(800, 600));
@@ -32,14 +32,14 @@ public class Vizualizace extends JPanel {
 	}
 
 	/**
-	 * Setter na simulační čas
+	 * @param t simulační čas v milisekundách
 	 */
 	public void setSimulationTime(long t){
 		simulationTime = t;
 	}
 
 	/**
-	 * Zjistí okraje vesmíru, jeho šířku a výšku
+	 * Zjistí okraje vesmíru, jeho šířku, výšku a scale
 	 */
 	private void setSpaceBorder(){
 		x_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusX).toList());
@@ -80,11 +80,11 @@ public class Vizualizace extends JPanel {
 		Rectangle2D background = new Rectangle2D.Double(x_min, y_min, space_width, space_height);
 		g2.fill(background);
 
-		// Vykreslení planet
+		// Vykresleni planet
 		g2.setColor(Color.BLACK);
 		drawPlanets(g2);
 
-		// Vykreslení oznacene planety
+		// Vykresleni oznacene planety
 		if(selectedPlanet != null) {
 			g2.setColor(Color.GRAY);
 			g2.fill(new Ellipse2D.Double(selectedPlanet.getNegativeRadiusX(), selectedPlanet.getNegativeRadiusY(), 2 * selectedPlanet.getRadius(), 2 * selectedPlanet.getRadius()));
@@ -111,10 +111,12 @@ public class Vizualizace extends JPanel {
 		String velocityString = String.format(" Rychlost X, Y: %.3f, %.3f", p.getVelocityX(), p.getVelocityY());
 		g2.setFont(new Font("Calibri", Font.PLAIN, 15));
 		int textHeight = g2.getFontMetrics().getHeight();
+
 		g2.setColor(Color.WHITE);
 		g2.drawString(nameString, 0, textHeight + 1);
 		g2.drawString(positionString, 0, textHeight*2 + 1);
 		g2.drawString(velocityString, 0, textHeight*3 + 1);
+
 		g2.setColor(Color.BLACK);
 		g2.drawString(nameString, 0, textHeight);
 		g2.drawString(positionString, 0, textHeight*2);
@@ -124,15 +126,17 @@ public class Vizualizace extends JPanel {
 	/**
 	 * Vypíše simulační čas v pravém horním rohu okna
 	 * @param g2 kreslítko
-	 * @param time čas na vykreslení
+	 * @param time čas na vykreslení v milisekundách
 	 */
 	public void setTimeLabel(Graphics2D g2, long time){
-		String timeString = String.format("Simulacni cas: %d s", time/1000);
+		String timeString = String.format("Simulacni cas: %.3f s ", (double) time/1000);
 		g2.setFont(new Font("Calibri", Font.PLAIN, 15));
 		int textWidth = g2.getFontMetrics().stringWidth(timeString);
 		int textHeight = g2.getFontMetrics().getHeight();
+
 		g2.setColor(Color.WHITE);
 		g2.drawString(timeString, this.getWidth() - textWidth + 1, textHeight + 1);
+
 		g2.setColor(Color.BLACK);
 		g2.drawString(timeString, this.getWidth() - textWidth, textHeight);
 	}
@@ -157,6 +161,7 @@ public class Vizualizace extends JPanel {
 
 	/**
 	 * HitTest, projde seznam planet a zjistí, jestli se body x, y nacházejí uvnitř elipsy
+	 *
 	 * !! PROBLÉM S OPERAČNÍM SYSTÉMEM !!
 	 * !! METODA FUNGUJE POUZE NA ZVĚTŠENÍ OKEN APLIKACÍ NA 100% !!
 	 * @param x souřadníce x

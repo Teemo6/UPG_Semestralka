@@ -1,10 +1,16 @@
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Instance třídy {@code Simulace} představuje časovač simulace
+ * @author Štěpán Faragula 06-04-2022
+ */
 public class SimulationTimer {
     private long startTime;
+    private long currentTime;
     private long newSimulationTime;
     private long oldSimulatonTime;
+
     private long startPauseTime;
     private long endPauseTime;
     private long pause;
@@ -12,6 +18,14 @@ public class SimulationTimer {
 
     private boolean simulationRunning = true;
 
+    /**
+     * Nastaví časovač simulace
+     *
+     * plánuje výpočty a překreslení plátna
+     * @param simulace simulace vesmíru
+     * @param vizualizace vizualizace vesmíru
+     * @param casovySkok kolik představuje jedna sekunda reálného času sekund simulačních
+     */
     public SimulationTimer(Simulace simulace, Vizualizace vizualizace, double casovySkok){
         startTime = System.currentTimeMillis();
 
@@ -19,7 +33,7 @@ public class SimulationTimer {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                long currentTime = System.currentTimeMillis();
+                currentTime = System.currentTimeMillis();
                 if(simulationRunning){
                     pause = endPauseTime - startPauseTime;
                     newSimulationTime = currentTime - startTime - pause;
@@ -33,6 +47,11 @@ public class SimulationTimer {
         }, 0, 20);
     }
 
+    /**
+     * Umí pozastavit simulaci
+     *
+     * sčítá všechny pauzy v minuosti
+     */
     public void runPauseSimulation(){
         if(simulationRunning)
             startPauseTime = System.currentTimeMillis() + allPauses;

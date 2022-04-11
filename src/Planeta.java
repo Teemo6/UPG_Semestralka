@@ -1,3 +1,7 @@
+/**
+ * Instance třídy {@code Planeta} představuje vesmírné těleso
+ * @author Štěpán Faragula 28-03-2022
+ */
 public class Planeta {
     private String name;
     private String type;
@@ -91,8 +95,8 @@ public class Planeta {
     }
 
     /**
-     * @param x
-     * @param y
+     * @param x x
+     * @param y y
      */
     public void setPosition(double x, double y) {
         this.position = new DoubleVector2D(x, y);
@@ -113,8 +117,8 @@ public class Planeta {
     }
 
     /**
-     * @param x
-     * @param y
+     * @param x x
+     * @param y y
      */
     public void setVelocity(double x, double y) {
         this.velocity = new DoubleVector2D(x, y);
@@ -149,8 +153,8 @@ public class Planeta {
     }
 
     /**
-     * @param x
-     * @param y
+     * @param x x
+     * @param y y
      */
     public void setAcceleration(double x, double y){
         this.acceleration = new DoubleVector2D(x, y);

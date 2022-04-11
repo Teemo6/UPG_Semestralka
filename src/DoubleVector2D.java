@@ -4,7 +4,7 @@
  */
 
 public class DoubleVector2D {
-    /** Hodnoty x, y */
+    // Hodnoty x, y
     private double x;
     private double y;
 

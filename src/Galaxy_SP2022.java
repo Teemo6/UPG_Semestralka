@@ -4,11 +4,19 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Semestrální práce z UPG
+ *
+ * vizualizace simulace vesmíru
+ * @author Štěpán Faragula 28-03-2022
+ */
 public class Galaxy_SP2022 {
-
 	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
+	/**
+	 * Spustí simulaci
+	 */
 	public static void vytvorOknoVizualizace(){
 		JFrame okno = new JFrame();
 		okno.setTitle("A21B0119P - Stepan Faragula");
@@ -46,6 +54,10 @@ public class Galaxy_SP2022 {
 		});
 	}
 
+	/**
+	 * Načte data a spustí simulaci
+	 * @param args data simulace
+	 */
 	public static void main(String[] args) {
 		//VSTUP_DAT.nactiData(args[0]);
 		VSTUP_DAT.nactiData(VSTUP_SOUBORU);

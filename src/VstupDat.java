@@ -44,6 +44,7 @@ public class VstupDat{
 
     /**
      * Načte konstanty a vytvoří planety ze souboru
+     *
      * využívá služeb metod {@code nactiKonstanty()} a {@code vytvorPlanetu()}
      *
      * @param vstupniSoubor soubor k načtení
