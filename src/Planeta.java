@@ -25,10 +25,9 @@ public class Planeta {
         this.type = type;
         this.position = position;
         this.velocity = velocity;
-        this.weight = Math.abs(weight);
+        this.weight = weight;
 
-        double r = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
-        this.radius = r;
+        this.radius = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
      }
 
     /**

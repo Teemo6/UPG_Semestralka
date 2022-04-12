@@ -11,7 +11,9 @@ import java.awt.event.MouseEvent;
  * @author Štěpán Faragula 28-03-2022
  */
 public class Galaxy_SP2022 {
-	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
+	// Testovací atribut
+	private static final String VSTUP_SOUBORU = "data/random500.csv";
+
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
 	/**
@@ -47,8 +49,10 @@ public class Galaxy_SP2022 {
 			public void mousePressed(MouseEvent e) {
 				Planeta planetHit = vizualizaceVesmiru.getHitPlanet(e.getX(), e.getY());
 				if(planetHit != null){
+					System.out.println(planetHit);
 					vizualizaceVesmiru.showSelectedPlanet(planetHit);
 				}
+				vizualizaceVesmiru.repaint();
 			}
 
 		});
@@ -60,6 +64,8 @@ public class Galaxy_SP2022 {
 	 */
 	public static void main(String[] args) {
 		//VSTUP_DAT.nactiData(args[0]);
+
+		// Testovací spuštění
 		VSTUP_DAT.nactiData(VSTUP_SOUBORU);
 		vytvorOknoVizualizace();
 	}
