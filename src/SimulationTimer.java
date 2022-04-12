@@ -3,7 +3,8 @@ import java.util.TimerTask;
 
 /**
  * Instance třídy {@code Simulace} představuje časovač simulace
- * @author Štěpán Faragula 06-04-2022
+ * @author Štěpán Faragula 10-04-2022
+ * @version 1.21
  */
 public class SimulationTimer {
     private long startTime;

@@ -1,6 +1,7 @@
 /**
  * Instance třídy {@code DoubleVector2D} představuje přepravku pro body na ose x a y
- * @author Štěpán Faragula 28-03-2022
+ * @author Štěpán Faragula 10-04-2022
+ * @version 1.21
  */
 
 public class DoubleVector2D {

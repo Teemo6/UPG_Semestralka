@@ -6,7 +6,8 @@ import javax.swing.*;
 
 /**
  * Instance třídy {@code Vizualizace} představuje plátno na kreslení vesmíru
- * @author Štěpán Faragula 31-03-2022
+ * @author Štěpán Faragula 10-04-2022
+ * @version 1.21
  */
 public class Vizualizace extends JPanel {
 
@@ -14,7 +15,7 @@ public class Vizualizace extends JPanel {
 	public long simulationTime;
 
 	// Minimální průměr vykreslené planety, v pixelech
-	private final double MINIMAL_PLANET_SIZE = 4;
+	public final double MINIMAL_PLANET_SIZE = 4;
 
 	private List<Planeta> seznamPlanet;
 	private Planeta selectedPlanet;
@@ -47,7 +48,7 @@ public class Vizualizace extends JPanel {
 	/**
 	 * Zjistí okraje vesmíru, jeho šířku, výšku a scale
 	 */
-	private void setSpaceBorder(){
+	private void computeSpaceBorder(){
 		x_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusX).toList());
 		x_max = Collections.max(seznamPlanet.stream().map(Planeta::getPositiveRadiusX).toList());
 		y_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusY).toList());
@@ -71,7 +72,7 @@ public class Vizualizace extends JPanel {
 		Graphics2D g2 = (Graphics2D)g;
 
 		// Scaling
-		setSpaceBorder();
+		computeSpaceBorder();
 		checkIsSomePlanetSmall();
 
 		AffineTransform oldTransform = g2.getTransform();
@@ -104,11 +105,11 @@ public class Vizualizace extends JPanel {
 
 		// Label casu
 		g2.setTransform(oldTransform);
-		setTimeLabel(g2, simulationTime);
+		showTimeLabel(g2, simulationTime);
 
 		// Label oznacena planeta
 		if(selectedPlanet != null) {
-			setSelectedPlanetLabel(g2, selectedPlanet);
+			showSelectedPlanetLabel(g2, selectedPlanet);
 		}
 	}
 
@@ -117,7 +118,7 @@ public class Vizualizace extends JPanel {
 	 * @param g2 kreslítko
 	 * @param p vybraná planeta
 	 */
-	public void setSelectedPlanetLabel(Graphics2D g2, Planeta p){
+	public void showSelectedPlanetLabel(Graphics2D g2, Planeta p){
 		String nameString = " Nazev objektu: " + p.getName();
 		String positionString = String.format(" Pozice X, Y: %.3f, %.3f", p.getPositionX(), p.getPositionY());
 		String velocityString = String.format(" Rychlost X, Y: %.3f, %.3f", p.getVelocityX(), p.getVelocityY());
@@ -140,7 +141,7 @@ public class Vizualizace extends JPanel {
 	 * @param g2 kreslítko
 	 * @param time čas na vykreslení v milisekundách
 	 */
-	public void setTimeLabel(Graphics2D g2, long time){
+	public void showTimeLabel(Graphics2D g2, long time){
 		String timeString = String.format("Simulacni cas: %.3f s ", (double) time/1000);
 		g2.setFont(new Font("Calibri", Font.PLAIN, 15));
 		int textWidth = g2.getFontMetrics().stringWidth(timeString);

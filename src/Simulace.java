@@ -2,7 +2,8 @@ import java.util.List;
 
 /**
  * Instance třídy {@code Simulace} představuje potřebné výpočty pro simulaci vesmíru
- * @author Štěpán Faragula 02-04-2022
+ * @author Štěpán Faragula 10-04-2022
+ * @version 1.21
  */
 public class Simulace {
     private List<Planeta> seznamPlanet;

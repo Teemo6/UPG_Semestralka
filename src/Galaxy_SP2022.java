@@ -8,7 +8,8 @@ import java.awt.event.MouseEvent;
  * Semestrální práce z UPG
  *
  * vizualizace simulace vesmíru
- * @author Štěpán Faragula 28-03-2022
+ * @author Štěpán Faragula 10-04-2022
+ * @version 1.21
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut

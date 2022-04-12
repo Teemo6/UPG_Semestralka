@@ -3,7 +3,8 @@ import java.io.*;
 
 /**
  * Instance třídy {@code VstupDat} představuje jedináčka, který umí přečíst vstupní soubor a vybrat potřebná data
- * @author Štěpán Faragula 28-03-2022
+ * @author Štěpán Faragula 10-04-2022
+ * @version 1.21
  */
 public class VstupDat{
     /** Instance jedináčka */
