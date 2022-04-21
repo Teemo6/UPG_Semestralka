@@ -1,6 +1,6 @@
 import java.awt.*;
 import java.awt.geom.*;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
@@ -17,7 +17,8 @@ public class Vizualizace extends JPanel {
 	// Minimální průměr vykreslené planety, v pixelech
 	public final double MINIMAL_PLANET_SIZE = 4;
 
-	private List<Planeta> seznamPlanet;
+	private List<Planeta> planetList;
+	private Map<Planeta, Ellipse2D> planetMap;
 	private Planeta selectedPlanet;
 	private AffineTransform miniTransform;
 
@@ -26,16 +27,15 @@ public class Vizualizace extends JPanel {
 	private double space_width, space_height;
 	private double scale;
 
-	// Kontroluje jestli je nějaká planeta malá
-	private boolean isSomePlanetSmall;
-
 	/**
 	 * Nastaví seznam planet a velikost okna
-	 * @param seznamPlanet seznam planet
+	 * @param planetList seznam planet
 	 */
-	public Vizualizace(List<Planeta> seznamPlanet) {
+	public Vizualizace(List<Planeta> planetList) {
 		this.setPreferredSize(new Dimension(800, 600));
-		this.seznamPlanet = seznamPlanet;
+		this.planetList = planetList;
+		planetMap = new HashMap<>(planetList.size());
+		updatePlanetMap();
 	}
 
 	/**
@@ -49,10 +49,10 @@ public class Vizualizace extends JPanel {
 	 * Zjistí okraje vesmíru, jeho šířku, výšku a scale
 	 */
 	private void computeSpaceBorder(){
-		x_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusX).toList());
-		x_max = Collections.max(seznamPlanet.stream().map(Planeta::getPositiveRadiusX).toList());
-		y_min = Collections.min(seznamPlanet.stream().map(Planeta::getNegativeRadiusY).toList());
-		y_max = Collections.max(seznamPlanet.stream().map(Planeta::getPositiveRadiusY).toList());
+		x_min = Collections.min(planetMap.keySet().stream().map(Planeta::getNegativeRadiusX).toList());
+		x_max = Collections.max(planetMap.keySet().stream().map(Planeta::getPositiveRadiusX).toList());
+		y_min = Collections.min(planetMap.keySet().stream().map(Planeta::getNegativeRadiusY).toList());
+		y_max = Collections.max(planetMap.keySet().stream().map(Planeta::getPositiveRadiusY).toList());
 
 		space_width = x_max - x_min;
 		space_height = y_max - y_min;
@@ -73,7 +73,6 @@ public class Vizualizace extends JPanel {
 
 		// Scaling
 		computeSpaceBorder();
-		checkIsSomePlanetSmall();
 
 		AffineTransform oldTransform = g2.getTransform();
 
@@ -91,16 +90,13 @@ public class Vizualizace extends JPanel {
 
 		// Vykresleni planet
 		g2.setColor(Color.BLACK);
+		updatePlanetMap();
 		drawPlanets(g2);
 
 		// Vykresleni oznacene planety
 		if(selectedPlanet != null) {
 			g2.setColor(Color.GRAY);
-			if(isSomePlanetSmall){
-				g2.fill(new Ellipse2D.Double(selectedPlanet.getPositionX() - (MINIMAL_PLANET_SIZE/2)/scale, selectedPlanet.getPositionY() - (MINIMAL_PLANET_SIZE/2)/scale, MINIMAL_PLANET_SIZE/scale, MINIMAL_PLANET_SIZE/scale));
-			} else {
-				g2.fill(new Ellipse2D.Double(selectedPlanet.getNegativeRadiusX(), selectedPlanet.getNegativeRadiusY(), 2 * selectedPlanet.getRadius(), 2 * selectedPlanet.getRadius()));
-			}
+			g2.fill(planetMap.get(selectedPlanet));
 		}
 
 		// Label casu
@@ -155,27 +151,23 @@ public class Vizualizace extends JPanel {
 	}
 
 	/**
-	 * Zjistí, jestli některá z planet není menší než minimální velikost
-	 */
-	public void checkIsSomePlanetSmall(){
-		for(Planeta p : seznamPlanet) {
-			if ( 2*p.getRadius() * scale < MINIMAL_PLANET_SIZE) {
-				isSomePlanetSmall = true;
-				return;
-			}
-		}
-		isSomePlanetSmall = false;
-	}
-
-	/**
 	 * Vykreslí všechny planety na plátno, průměr neklesne pod hodnotu MINIMAL_PLANET_SIZE
 	 * @param g2 kreslítko
 	 */
 	public void drawPlanets(Graphics2D g2){
-		if(isSomePlanetSmall){
-			seznamPlanet.forEach(p -> g2.fill(new Ellipse2D.Double(p.getPositionX() - (MINIMAL_PLANET_SIZE/2)/scale, p.getPositionY() - (MINIMAL_PLANET_SIZE/2)/scale, MINIMAL_PLANET_SIZE/scale, MINIMAL_PLANET_SIZE/scale)));
-		}else{
-			seznamPlanet.forEach(p -> g2.fill(new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2*p.getRadius(), 2*p.getRadius())));
+		planetMap.forEach((p, e) -> g2.fill(e));
+	}
+
+	public void updatePlanetMap(){
+		planetMap.clear();
+		for(Planeta p : planetList){
+			Ellipse2D e;
+			if(2*p.getRadius() * scale < MINIMAL_PLANET_SIZE){
+				e = new Ellipse2D.Double(p.getPositionX() - (MINIMAL_PLANET_SIZE/2)/scale, p.getPositionY() - (MINIMAL_PLANET_SIZE/2)/scale, MINIMAL_PLANET_SIZE/scale, MINIMAL_PLANET_SIZE/scale);
+			} else {
+				e = new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2 * p.getRadius(), 2 * p.getRadius());
+			}
+			planetMap.put(p ,e);
 		}
 	}
 
@@ -207,19 +199,14 @@ public class Vizualizace extends JPanel {
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-
 		miniTransform.transform(click, clickTransformed);
 
-		for(Planeta p : seznamPlanet){
-			Ellipse2D elipsa;
-			if(isSomePlanetSmall){
-				elipsa = new Ellipse2D.Double(p.getPositionX() - (MINIMAL_PLANET_SIZE/2)/scale, p.getPositionY() - (MINIMAL_PLANET_SIZE/2)/scale, MINIMAL_PLANET_SIZE/scale, MINIMAL_PLANET_SIZE/scale);
-			}else{
-				elipsa = new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2*p.getRadius(), 2*p.getRadius());
-			}
-			if(elipsa.contains(clickTransformed.getX(), clickTransformed.getY()))
-				return p;
-		}
-		return null;
+		selectedPlanet = null;
+		planetMap.forEach((p, e) -> {
+			if(e.contains(clickTransformed.getX(), clickTransformed.getY()))
+				selectedPlanet = p;
+		});
+
+		return selectedPlanet;
 	}
 }

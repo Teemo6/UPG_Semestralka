@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut
-	private static final String VSTUP_SOUBORU = "data/random500.csv";
+	private static final String VSTUP_SOUBORU = "data/negative.csv";
 
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
