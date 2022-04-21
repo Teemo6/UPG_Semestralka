@@ -17,15 +17,16 @@ public class Vizualizace extends JPanel {
 	// Minimální průměr vykreslené planety, v pixelech
 	public final double MINIMAL_PLANET_SIZE = 4;
 
-	private List<Planeta> planetList;
-	private Map<Planeta, Ellipse2D> planetMap;
+	// Všechno potřebné na planety
+	private final List<Planeta> planetList;
+	private final Map<Planeta, Ellipse2D> planetMap;
 	private Planeta selectedPlanet;
-	private AffineTransform miniTransform;
 
 	// Všechno potřebné na scaling
 	private double x_min, x_max, y_min, y_max;
 	private double space_width, space_height;
 	private double scale;
+	private AffineTransform miniTransform;
 
 	/**
 	 * Nastaví seznam planet a velikost okna
@@ -151,13 +152,17 @@ public class Vizualizace extends JPanel {
 	}
 
 	/**
-	 * Vykreslí všechny planety na plátno, průměr neklesne pod hodnotu MINIMAL_PLANET_SIZE
+	 * Vykreslí všechny planety na plátno
 	 * @param g2 kreslítko
 	 */
 	public void drawPlanets(Graphics2D g2){
 		planetMap.forEach((p, e) -> g2.fill(e));
 	}
 
+	/**
+	 * Aktualizuje mapu planet, vypočítá elipsy pro planety
+	 * pokud by byli menší než MINIMAL_PLANET_SIZE nastaví jim tuto velikost
+	 */
 	public void updatePlanetMap(){
 		planetMap.clear();
 		for(Planeta p : planetList){
@@ -172,25 +177,15 @@ public class Vizualizace extends JPanel {
 	}
 
 	/**
-	 * Nastaví atribut {@code selectedPlanet} na předanou planetu
-	 * @param planeta vybraná planeta
-	 */
-	public void showSelectedPlanet(Planeta planeta){
-		// provizorní řešení
-		selectedPlanet = planeta;
-	}
-
-	/**
-	 * HitTest, projde seznam planet a zjistí, jestli se body x, y nacházejí uvnitř elipsy
+	 * Projde planety a zjistí, jestli se body x, y nacházejí uvnitř elipsy
+	 * označí kliknutou planetu
 	 *
 	 * !! PROBLÉM S OPERAČNÍM SYSTÉMEM !!
 	 * !! METODA FUNGUJE POUZE NA ZVĚTŠENÍ OKEN APLIKACÍ NA 100% !!
 	 * @param x souřadníce x
 	 * @param y souřadníce y
-	 * @return true pokud ano
-	 * 		   false pokud ne
 	 */
-	public Planeta getHitPlanet(double x, double y) {
+	public void showHitPlanet(double x, double y) {
 		Point2D click = new Point2D.Double(x, y);
 		Point2D clickTransformed = new Point2D.Double();
 
@@ -206,7 +201,5 @@ public class Vizualizace extends JPanel {
 			if(e.contains(clickTransformed.getX(), clickTransformed.getY()))
 				selectedPlanet = p;
 		});
-
-		return selectedPlanet;
 	}
 }

@@ -13,7 +13,7 @@ import java.awt.event.MouseEvent;
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut
-	private static final String VSTUP_SOUBORU = "data/negative.csv";
+	private static final String VSTUP_SOUBORU = "data/random500.csv";
 
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
@@ -41,18 +41,13 @@ public class Galaxy_SP2022 {
 			if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_SPACE) {
 				timer.runPauseSimulation();
 			}
-
 			return false;
 		});
 
 		vizualizaceVesmiru.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				Planeta planetHit = vizualizaceVesmiru.getHitPlanet(e.getX(), e.getY());
-				if(planetHit != null){
-					System.out.println(planetHit);
-					vizualizaceVesmiru.showSelectedPlanet(planetHit);
-				}
+				vizualizaceVesmiru.showHitPlanet(e.getX(), e.getY());
 				vizualizaceVesmiru.repaint();
 			}
 
