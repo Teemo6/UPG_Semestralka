@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class Simulace {
      */
     public void updateSystem(double t){
         double velocityX, velocityY, positionX, positionY;
-        double dt_min = seznamPlanet.size() * casovySkok/100000.0;
+        double dt_min = seznamPlanet.size() * casovySkok/100.0;
 
         while(t > 0){
             double dt = Math.min(t, dt_min);
@@ -79,6 +80,36 @@ public class Simulace {
             zrychleniY *= konstantaG;
 
             iPlaneta.setAcceleration(zrychleniX, zrychleniY);
+        }
+    }
+
+    public void checkAllCollisions(){
+        for(int i = 0; i < seznamPlanet.size(); i++){
+            for(int j = i+1; j < seznamPlanet.size(); j++){
+                if(seznamPlanet.get(i).intersectWith(seznamPlanet.get(j))){
+                    Planeta mensiPlaneta = seznamPlanet.get(i).getRadius() <= seznamPlanet.get(j).getRadius() ? seznamPlanet.get(i) : seznamPlanet.get(j);
+                    Planeta vetsiPlaneta = seznamPlanet.get(i).getRadius() >  seznamPlanet.get(j).getRadius() ? seznamPlanet.get(i) : seznamPlanet.get(j);
+
+                    double iPart = vetsiPlaneta.getRadius() / (mensiPlaneta.getRadius() + vetsiPlaneta.getRadius());
+
+                    double posX = mensiPlaneta.getPositionX() + (vetsiPlaneta.getPositionX() - mensiPlaneta.getPositionX()) * iPart;
+                    double posY = mensiPlaneta.getPositionY() + (vetsiPlaneta.getPositionY() - mensiPlaneta.getPositionY()) * iPart;
+
+                    double velX = (mensiPlaneta.getWeight()*mensiPlaneta.getVelocityX() + vetsiPlaneta.getWeight()*vetsiPlaneta.getVelocityX())/(mensiPlaneta.getWeight() + vetsiPlaneta.getWeight());
+                    double velY = (mensiPlaneta.getWeight()*mensiPlaneta.getVelocityY() + vetsiPlaneta.getWeight()*vetsiPlaneta.getVelocityY())/(mensiPlaneta.getWeight() + vetsiPlaneta.getWeight());
+
+                    Planeta newPlaneta = new Planeta(
+                            "C(" + mensiPlaneta.getName() + "_" + vetsiPlaneta.getName() + ")",
+                            "Planeta",
+                            new DoubleVector2D(posX, posY),
+                            new DoubleVector2D(velX, velY),
+                            vetsiPlaneta.getWeight() + mensiPlaneta.getWeight());
+
+                    seznamPlanet.set(seznamPlanet.indexOf(seznamPlanet.get(i)), newPlaneta);
+                    seznamPlanet.remove(seznamPlanet.get(j));
+                    break;
+                }
+            }
         }
     }
 }

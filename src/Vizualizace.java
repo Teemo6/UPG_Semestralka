@@ -37,6 +37,7 @@ public class Vizualizace extends JPanel {
 		this.planetList = planetList;
 		planetMap = new HashMap<>(planetList.size());
 		updatePlanetMap();
+		computeSpaceBorder();
 	}
 
 	/**
@@ -95,6 +96,7 @@ public class Vizualizace extends JPanel {
 		drawPlanets(g2);
 
 		// Vykresleni oznacene planety
+		checkSelectionOnCollision();
 		if(selectedPlanet != null) {
 			g2.setColor(Color.GRAY);
 			g2.fill(planetMap.get(selectedPlanet));
@@ -173,6 +175,19 @@ public class Vizualizace extends JPanel {
 				e = new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2 * p.getRadius(), 2 * p.getRadius());
 			}
 			planetMap.put(p ,e);
+		}
+	}
+
+	// Pokud vybraná planeta kolidovala, přepne na nově vzniklou planetu
+	private void checkSelectionOnCollision(){
+		if(selectedPlanet != null){
+			if(!planetMap.containsKey(selectedPlanet)){
+				planetMap.keySet().forEach(p -> {
+					if(p.getName().contains("C(") && p.getName().contains(selectedPlanet.getName())){
+						selectedPlanet = p;
+					}
+				});
+			}
 		}
 	}
 

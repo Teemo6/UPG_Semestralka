@@ -31,6 +31,12 @@ public class Planeta {
         this.radius = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
      }
 
+     public boolean intersectWith(Planeta otherPlanet){
+        double posDiff = (otherPlanet.getPositionX() - this.getPositionX()) * (otherPlanet.getPositionX() - this.getPositionX()) + (otherPlanet.getPositionY() - this.getPositionY()) * (otherPlanet.getPositionY() - this.getPositionY());
+        double radDiff = (otherPlanet.getRadius() + this.radius) * (otherPlanet.getRadius() + this.radius);
+        return posDiff <= radDiff;
+     }
+
     /**
      * @return název planety
      */

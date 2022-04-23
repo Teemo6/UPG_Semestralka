@@ -17,7 +17,8 @@ public class SimulationTimer {
     private long pause;
     private long allPauses;
 
-    private boolean simulationRunning = true;
+    //private boolean simulationRunning = true;
+    public static boolean simulationRunning = true;
 
     /**
      * Nastaví časovač simulace
@@ -39,6 +40,7 @@ public class SimulationTimer {
                     pause = endPauseTime - startPauseTime;
                     newSimulationTime = currentTime - startTime - pause;
                     simulace.updateSystem(casovySkok * (newSimulationTime - oldSimulatonTime)/1000);
+                    simulace.checkAllCollisions();
                     oldSimulatonTime = newSimulationTime;
 
                     vizualizace.setSimulationTime(newSimulationTime * (long) casovySkok);
