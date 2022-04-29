@@ -83,6 +83,10 @@ public class Simulace {
         }
     }
 
+    public void updateVelocityMap(Double time){
+        seznamPlanet.forEach(p -> p.addRecordToMap(time));
+    }
+
     public void checkAllCollisions(){
         for(int i = 0; i < seznamPlanet.size(); i++){
             for(int j = i+1; j < seznamPlanet.size(); j++){

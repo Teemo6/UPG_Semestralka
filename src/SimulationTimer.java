@@ -41,6 +41,8 @@ public class SimulationTimer {
                     newSimulationTime = currentTime - startTime - pause;
                     simulace.updateSystem(casovySkok * (newSimulationTime - oldSimulatonTime)/1000);
                     simulace.checkAllCollisions();
+
+                    simulace.updateVelocityMap();
                     oldSimulatonTime = newSimulationTime;
 
                     vizualizace.setSimulationTime(newSimulationTime * (long) casovySkok);

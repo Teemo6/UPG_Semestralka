@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Instance třídy {@code Planeta} představuje vesmírné těleso
  * @author Štěpán Faragula 10-04-2022
@@ -12,6 +15,8 @@ public class Planeta {
 
     private double radius;
     private DoubleVector2D acceleration;
+
+    private Map<Double, Double> velocityMap;
 
     /**
      * Nastaví potřebné atributy, vypočítá poloměr podle váhy
@@ -29,6 +34,8 @@ public class Planeta {
         this.weight = weight;
 
         this.radius = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
+
+        this.velocityMap = new HashMap<>(60);
      }
 
      public boolean intersectWith(Planeta otherPlanet){
@@ -164,6 +171,11 @@ public class Planeta {
      */
     public void setAcceleration(double x, double y){
         this.acceleration = new DoubleVector2D(x, y);
+    }
+
+    public void addRecordToMap(){
+        if(velocityMap.size() > 59){
+        }
     }
 
     /**

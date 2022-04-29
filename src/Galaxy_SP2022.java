@@ -47,8 +47,20 @@ public class Galaxy_SP2022 {
 		vizualizaceVesmiru.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				vizualizaceVesmiru.showHitPlanet(e.getX(), e.getY());
-				vizualizaceVesmiru.repaint();
+				// Levé kliknutí
+				if(SwingUtilities.isLeftMouseButton(e)){
+					Planeta planetHit = vizualizaceVesmiru.getPlanetHit(e.getX(), e.getY());
+					vizualizaceVesmiru.showSelectedPlanet(planetHit);
+					vizualizaceVesmiru.repaint();
+				}
+
+				// Pravé kliknutí
+				if(SwingUtilities.isRightMouseButton(e)){
+					Planeta planetHit = vizualizaceVesmiru.getPlanetHit(e.getX(), e.getY());
+					if(planetHit != null){
+						Graf.vytvorOknoGrafu(planetHit);
+					}
+				}
 			}
 
 		});

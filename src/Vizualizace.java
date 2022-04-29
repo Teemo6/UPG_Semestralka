@@ -191,6 +191,10 @@ public class Vizualizace extends JPanel {
 		}
 	}
 
+	public void showSelectedPlanet(Planeta planeta){
+		selectedPlanet = planeta;
+	}
+
 	/**
 	 * Projde planety a zjistí, jestli se body x, y nacházejí uvnitř elipsy
 	 * označí kliknutou planetu
@@ -200,7 +204,7 @@ public class Vizualizace extends JPanel {
 	 * @param x souřadníce x
 	 * @param y souřadníce y
 	 */
-	public void showHitPlanet(double x, double y) {
+	public Planeta getPlanetHit(double x, double y) {
 		Point2D click = new Point2D.Double(x, y);
 		Point2D clickTransformed = new Point2D.Double();
 
@@ -211,10 +215,12 @@ public class Vizualizace extends JPanel {
 		}
 		miniTransform.transform(click, clickTransformed);
 
-		selectedPlanet = null;
+		Planeta[] hitPlanet = new Planeta[1];
+
 		planetMap.forEach((p, e) -> {
 			if(e.contains(clickTransformed.getX(), clickTransformed.getY()))
-				selectedPlanet = p;
+				hitPlanet[0] = p;
 		});
+		return hitPlanet[0];
 	}
 }
