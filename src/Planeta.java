@@ -1,22 +1,27 @@
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Instance třídy {@code Planeta} představuje vesmírné těleso
- * @author Štěpán Faragula 10-04-2022
- * @version 1.21
+ * @author Štěpán Faragula 30-04-2022
+ * @version 1.24
  */
 public class Planeta {
+    // Nastavené hodnoty
     private String name;
     private String type;
     private DoubleVector2D position;
     private DoubleVector2D velocity;
     private double weight;
 
+    // Vypočítané hodnoty
     private double radius;
     private DoubleVector2D acceleration;
 
-    private Map<Double, Double> velocityMap;
+    // Data grafu
+    private TreeMap<Long, Double> velocityMap;
+    private Long lastTime;
+    private Double lastVelocity;
 
     /**
      * Nastaví potřebné atributy, vypočítá poloměr podle váhy
@@ -35,9 +40,14 @@ public class Planeta {
 
         this.radius = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
 
-        this.velocityMap = new HashMap<>(60);
+        this.velocityMap = new TreeMap<>();
      }
 
+    /**
+     * Vyhodnotí jestli instance koliduje s jinou planetou
+     * @param otherPlanet druhá planeta
+     * @return true pokud spolu kolidují
+     */
      public boolean intersectWith(Planeta otherPlanet){
         double posDiff = (otherPlanet.getPositionX() - this.getPositionX()) * (otherPlanet.getPositionX() - this.getPositionX()) + (otherPlanet.getPositionY() - this.getPositionY()) * (otherPlanet.getPositionY() - this.getPositionY());
         double radDiff = (otherPlanet.getRadius() + this.radius) * (otherPlanet.getRadius() + this.radius);
@@ -173,11 +183,42 @@ public class Planeta {
         this.acceleration = new DoubleVector2D(x, y);
     }
 
-    public void addRecordToMap(){
-        if(velocityMap.size() > 59){
+    /**
+     * Přidá záznam do mapy rychlosti
+     * převede rychlost na skalár s jednotkama v km/h
+     * uloží poslední čas a rychlost
+     * @param time čas v ms
+     */
+    public void addRecordToMap(Long time){
+        lastTime = time;
+        lastVelocity = Math.sqrt(getVelocityX() * getVelocityX() + getVelocityY() * getVelocityY()) * 3.6;
+        velocityMap.put(lastTime, lastVelocity);
+
+        if(velocityMap.lastKey() - velocityMap.firstKey() > 30000){
+            velocityMap.remove(velocityMap.firstKey());
         }
     }
 
+    /**
+     * @return mapa rychlostí
+     */
+    public Map<Long, Double> getRecordMap(){
+        return velocityMap;
+    }
+
+    /**
+     * @return poslední čas uložený do mapy
+     */
+    public Long getLastTime(){
+        return lastTime;
+    }
+
+    /**
+     * @return poslední rychlost uložený do mapy
+     */
+    public Double getLastVelocity(){
+        return lastVelocity;
+    }
     /**
      * @return {@code String} v podobě: [Nazev: name, Typ: type, Pozice: (x, y), Rychlost: (x, y), Hmotnost: weight]
      */

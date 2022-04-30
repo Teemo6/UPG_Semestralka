@@ -3,8 +3,8 @@ import java.util.TimerTask;
 
 /**
  * Instance třídy {@code Simulace} představuje časovač simulace
- * @author Štěpán Faragula 10-04-2022
- * @version 1.21
+ * @author Štěpán Faragula 29-04-2022
+ * @version 1.22
  */
 public class SimulationTimer {
     private long startTime;
@@ -22,31 +22,33 @@ public class SimulationTimer {
 
     /**
      * Nastaví časovač simulace
-     *
      * plánuje výpočty a překreslení plátna
+     *
      * @param simulace simulace vesmíru
      * @param vizualizace vizualizace vesmíru
      * @param casovySkok kolik představuje jedna sekunda reálného času sekund simulačních
      */
     public SimulationTimer(Simulace simulace, Vizualizace vizualizace, double casovySkok){
         startTime = System.currentTimeMillis();
-
         Timer timer = new Timer();
+
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 currentTime = System.currentTimeMillis();
+                simulace.updateVelocityMap(currentTime - startTime);
+
                 if(simulationRunning){
                     pause = endPauseTime - startPauseTime;
+
                     newSimulationTime = currentTime - startTime - pause;
                     simulace.updateSystem(casovySkok * (newSimulationTime - oldSimulatonTime)/1000);
                     simulace.checkAllCollisions();
 
-                    simulace.updateVelocityMap();
                     oldSimulatonTime = newSimulationTime;
-
                     vizualizace.setSimulationTime(newSimulationTime * (long) casovySkok);
                     vizualizace.repaint();
+
                 }
             }
         }, 0, 20);
@@ -54,7 +56,6 @@ public class SimulationTimer {
 
     /**
      * Umí pozastavit simulaci
-     *
      * sčítá všechny pauzy v minuosti
      */
     public void runPauseSimulation(){

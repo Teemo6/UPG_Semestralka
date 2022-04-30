@@ -2,45 +2,103 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.category.DefaultCategoryDataset;
-
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
+import java.util.*;
+import java.util.Timer;
 
+
+/**
+ * Knihovní třída {@code Graf} umí vykreslit graf rychlosti planety
+ * @author Štěpán Faragula 30-04-2022
+ * @version 1.24
+ */
 public class Graf {
-    public static void vytvorOknoGrafu(Planeta planeta) {
+
+    // Množina všech právě zobrazených grafů planet
+    // Umožňuje pozorování rychlosti více planet najednou
+    private static final Set<Planeta> grafyPlanet = new HashSet<>();
+
+    /**
+     * Vytvoří graf rychlosti v novém okně
+     * @param planeta planeta kterou zobrazujeme
+     */
+    public static void vytvorOknoGrafu(Planeta planeta){
+        if(grafyPlanet.contains(planeta)){
+            return;
+        }
+        grafyPlanet.add(planeta);
+
         JFrame okno = new JFrame();
         okno.setTitle("Rychlost planety " + planeta.getName());
-        okno.setSize(800, 600);
+        okno.setSize(700, 500);
 
-        JFreeChart chart = ChartFactory.createLineChart(
-                "Rychlost planety " + planeta.getName(),
-                "t [s]",
-                "v [km/h]",
-                createDataset(),
-                PlotOrientation.VERTICAL,
-                true, true, false
-        );
-
-        ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(560, 367));
+        ChartPanel chartPanel = createChart(planeta);
+        chartPanel.setPreferredSize(new Dimension(700, 500));
         okno.add(chartPanel);
         okno.pack();
 
-        okno.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        okno.setLocationRelativeTo(null);
+        WindowListener exitListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                grafyPlanet.remove(planeta);
+            }
+        };
+        okno.addWindowListener(exitListener);
+
+        okno.setLocationRelativeTo(Galaxy_SP2022.okno);
         okno.setVisible(true);
     }
 
-    private static DefaultCategoryDataset createDataset(){
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset( );
-        dataset.addValue( 15 , "schools" , "1970" );
-        dataset.addValue( 30 , "schools" , "1980" );
-        dataset.addValue( 60 , "schools" ,  "1990" );
-        dataset.addValue( 120 , "schools" , "2000" );
-        dataset.addValue( 240 , "schools" , "2010" );
-        dataset.addValue( 300 , "schools" , "2014" );
-        return dataset;
+    // Vytvoří panel grafu
+    private static ChartPanel createChart(Planeta p){
+
+        // Vytvoří graf nashromážděných dat
+        XYSeries series = new XYSeries("Rychlost");
+        p.getRecordMap().forEach((t, v) -> series.add((double)t/1000, v));
+        XYSeriesCollection dataset = new XYSeriesCollection(series);
+
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Rychlost planety " + p.getName(),
+                "t [s]",
+                "v [km/h]",
+                dataset,
+                PlotOrientation.VERTICAL,
+                false, true, false
+        );
+
+        // Časovač, aktualizuje data
+        Timer plotTimer = new Timer();
+        plotTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (series.getItemCount() < p.getRecordMap().size()) {
+                    series.add((double) p.getLastTime() / 1000, p.getLastVelocity());
+                    if(series.getMaxX() - series.getMinX() > 30) {
+                        series.remove(0);
+                    }
+                }
+            }
+        }, 0, 20);
+
+        // Stylování grafu
+        chart.setBackgroundPaint(Color.LIGHT_GRAY);
+
+        XYPlot plot = chart.getXYPlot();
+        plot.setBackgroundPaint(Color.BLACK);
+        plot.setRangeGridlinePaint(Color.WHITE);
+        plot.setDomainGridlinePaint(Color.WHITE);
+
+        XYLineAndShapeRenderer renderer0 = new XYLineAndShapeRenderer();
+        plot.setRenderer(0, renderer0);
+        renderer0.setSeriesShapesVisible(0,  false);
+        renderer0.setSeriesPaint(0, Color.MAGENTA);
+
+        return new ChartPanel(chart);
     }
 }

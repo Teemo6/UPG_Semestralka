@@ -1,3 +1,5 @@
+import org.jfree.chart.JFreeChart;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -8,8 +10,8 @@ import java.awt.event.MouseEvent;
  * Semestrální práce z UPG
  *
  * vizualizace simulace vesmíru
- * @author Štěpán Faragula 10-04-2022
- * @version 1.21
+ * @author Štěpán Faragula 29-04-2022
+ * @version 1.22
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut
@@ -17,11 +19,13 @@ public class Galaxy_SP2022 {
 
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
+	public static JFrame okno;
+
 	/**
 	 * Spustí simulaci
 	 */
 	public static void vytvorOknoVizualizace(){
-		JFrame okno = new JFrame();
+		okno = new JFrame();
 		okno.setTitle("A21B0119P - Stepan Faragula");
 		okno.setSize(800, 600);
 

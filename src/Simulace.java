@@ -3,8 +3,8 @@ import java.util.List;
 
 /**
  * Instance třídy {@code Simulace} představuje potřebné výpočty pro simulaci vesmíru
- * @author Štěpán Faragula 10-04-2022
- * @version 1.21
+ * @author Štěpán Faragula 29-04-2022
+ * @version 1.22
  */
 public class Simulace {
     private List<Planeta> seznamPlanet;
@@ -31,7 +31,7 @@ public class Simulace {
      */
     public void updateSystem(double t){
         double velocityX, velocityY, positionX, positionY;
-        double dt_min = seznamPlanet.size() * casovySkok/100.0;
+        double dt_min = seznamPlanet.size() * casovySkok/100000.0;
 
         while(t > 0){
             double dt = Math.min(t, dt_min);
@@ -83,10 +83,10 @@ public class Simulace {
         }
     }
 
-    public void updateVelocityMap(Double time){
-        seznamPlanet.forEach(p -> p.addRecordToMap(time));
-    }
-
+    /**
+     * Projde všechny planety jestli kolidují
+     * při kolizi smaže planety a vytvoří novou
+     */
     public void checkAllCollisions(){
         for(int i = 0; i < seznamPlanet.size(); i++){
             for(int j = i+1; j < seznamPlanet.size(); j++){
@@ -115,5 +115,13 @@ public class Simulace {
                 }
             }
         }
+    }
+
+    /**
+     * Projde všechny planety a uloží jim rychlost s časem do mapy
+     * @param time čas od začátku simulace v ms
+     */
+    public void updateVelocityMap(Long time){
+        seznamPlanet.forEach(p -> p.addRecordToMap(time));
     }
 }
