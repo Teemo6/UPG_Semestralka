@@ -87,7 +87,7 @@ public class Vizualizace extends JPanel {
 
 		// Trajektorie
 		g2.setColor(new Color(70, 70, 70));
-		planetList.forEach(p -> p.getPositionMap().forEach((t, e) -> g2.fill(new Ellipse2D.Double(e.getX(), e.getY(), 2 * p.getRadius(), 2 * p.getRadius()))));
+		drawTrajectory(g2);
 
 		// Vykresleni planet
 		g2.setColor(Color.BLACK);
@@ -160,6 +160,10 @@ public class Vizualizace extends JPanel {
 		planetMap.forEach((p, e) -> g2.fill(e));
 	}
 
+	public void drawTrajectory(Graphics2D g2){
+		planetList.forEach(p -> p.getPositionMap().forEach((t, e) -> g2.fill(new Ellipse2D.Double(e.getX(), e.getY(), 2 * p.getRadius(), 2 * p.getRadius()))));
+	}
+
 	/**
 	 * Aktualizuje mapu planet, vypočítá elipsy pro planety
 	 * pokud by byli menší než MINIMAL_PLANET_SIZE nastaví jim tuto velikost
@@ -190,6 +194,10 @@ public class Vizualizace extends JPanel {
 		}
 	}
 
+	/**
+	 * Zobrazí vybranou planetu
+	 * @param planeta planeta k zobrazení
+	 */
 	public void showSelectedPlanet(Planeta planeta){
 		selectedPlanet = planeta;
 	}
@@ -220,6 +228,7 @@ public class Vizualizace extends JPanel {
 			if(e.contains(clickTransformed.getX(), clickTransformed.getY()))
 				hitPlanet[0] = p;
 		});
+
 		return hitPlanet[0];
 	}
 }

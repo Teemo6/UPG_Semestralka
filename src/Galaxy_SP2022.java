@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut
-	private static final String VSTUP_SOUBORU = "data/solar.csv";
+	private static final String VSTUP_SOUBORU = "data/collision2.csv";
 
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
