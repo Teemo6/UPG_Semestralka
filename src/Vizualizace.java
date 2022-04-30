@@ -85,10 +85,9 @@ public class Vizualizace extends JPanel {
 
 		miniTransform = g2.getTransform();
 
-		// Pozadi plochy
-		g2.setColor(Color.lightGray);
-		Rectangle2D background = new Rectangle2D.Double(x_min, y_min, space_width, space_height);
-		g2.fill(background);
+		// Trajektorie
+		g2.setColor(new Color(70, 70, 70));
+		planetList.forEach(p -> p.getPositionMap().forEach((t, e) -> g2.fill(new Ellipse2D.Double(e.getX(), e.getY(), 2 * p.getRadius(), 2 * p.getRadius()))));
 
 		// Vykresleni planet
 		g2.setColor(Color.BLACK);

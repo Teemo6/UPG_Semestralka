@@ -12,7 +12,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
 
-
 /**
  * Knihovní třída {@code Graf} umí vykreslit graf rychlosti planety
  * @author Štěpán Faragula 30-04-2022
@@ -60,7 +59,7 @@ public class Graf {
 
         // Vytvoří graf nashromážděných dat
         XYSeries series = new XYSeries("Rychlost");
-        p.getRecordMap().forEach((t, v) -> series.add((double)t/1000, v));
+        p.getVelociyMap().forEach((t, v) -> series.add((double)t/1000, v));
         XYSeriesCollection dataset = new XYSeriesCollection(series);
 
         JFreeChart chart = ChartFactory.createXYLineChart(
@@ -77,7 +76,7 @@ public class Graf {
         plotTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (series.getItemCount() < p.getRecordMap().size()) {
+                if (series.getItemCount() < p.getVelociyMap().size()) {
                     series.add((double) p.getLastTime() / 1000, p.getLastVelocity());
                     if(series.getMaxX() - series.getMinX() > 30) {
                         series.remove(0);

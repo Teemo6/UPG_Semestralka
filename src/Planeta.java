@@ -1,4 +1,3 @@
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -18,10 +17,16 @@ public class Planeta {
     private double radius;
     private DoubleVector2D acceleration;
 
-    // Data grafu
-    private TreeMap<Long, Double> velocityMap;
+    // Poslední uložený čas
     private Long lastTime;
+
+    // Rychlost v čase
+    private TreeMap<Long, Double> velocityMap;
     private Double lastVelocity;
+
+    // Pozice v čase
+    private TreeMap<Long, DoubleVector2D> positionMap;
+    private DoubleVector2D lastPosition;
 
     /**
      * Nastaví potřebné atributy, vypočítá poloměr podle váhy
@@ -41,6 +46,7 @@ public class Planeta {
         this.radius = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
 
         this.velocityMap = new TreeMap<>();
+        this.positionMap = new TreeMap<>();
      }
 
     /**
@@ -184,26 +190,40 @@ public class Planeta {
     }
 
     /**
-     * Přidá záznam do mapy rychlosti
+     * Přidá záznamy do map rychlosti a pozice
      * převede rychlost na skalár s jednotkama v km/h
-     * uloží poslední čas a rychlost
+     * poslední pozice se bere jako levý horní roh pro budoucí vykreslení
      * @param time čas v ms
      */
     public void addRecordToMap(Long time){
         lastTime = time;
         lastVelocity = Math.sqrt(getVelocityX() * getVelocityX() + getVelocityY() * getVelocityY()) * 3.6;
+        lastPosition = new DoubleVector2D(getNegativeRadiusX(), getNegativeRadiusY());
+
         velocityMap.put(lastTime, lastVelocity);
+        positionMap.put(lastTime, lastPosition);
 
         if(velocityMap.lastKey() - velocityMap.firstKey() > 30000){
             velocityMap.remove(velocityMap.firstKey());
+        }
+
+        if(positionMap.lastKey() - positionMap.firstKey() > 1000){
+            positionMap.remove(positionMap.firstKey());
         }
     }
 
     /**
      * @return mapa rychlostí
      */
-    public Map<Long, Double> getRecordMap(){
+    public TreeMap<Long, Double> getVelociyMap(){
         return velocityMap;
+    }
+
+    /**
+     * @return mapa pozic
+     */
+    public TreeMap<Long, DoubleVector2D> getPositionMap(){
+        return positionMap;
     }
 
     /**
@@ -214,11 +234,19 @@ public class Planeta {
     }
 
     /**
-     * @return poslední rychlost uložený do mapy
+     * @return poslední rychlost uložená do mapy
      */
     public Double getLastVelocity(){
         return lastVelocity;
     }
+
+    /**
+     * @return poslední pozice uložená do mapy
+     */
+    public DoubleVector2D getLastPosition(){
+        return lastPosition;
+    }
+
     /**
      * @return {@code String} v podobě: [Nazev: name, Typ: type, Pozice: (x, y), Rychlost: (x, y), Hmotnost: weight]
      */
