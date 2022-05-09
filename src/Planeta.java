@@ -1,4 +1,8 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 /**
  * Instance třídy {@code Planeta} představuje vesmírné těleso
@@ -17,15 +21,11 @@ public class Planeta {
     private double radius;
     private DoubleVector2D acceleration;
 
-    // Poslední uložený čas
+    // Mapa posledních planet
+    private TreeMap<Long, OldPlanetTraits> oldPlanetMap;
+    private List<DoubleVector2D> oldPositionList;
     private Long lastTime;
-
-    // Rychlost v čase
-    private TreeMap<Long, Double> velocityMap;
     private Double lastVelocity;
-
-    // Pozice v čase
-    private TreeMap<Long, DoubleVector2D> positionMap;
     private DoubleVector2D lastPosition;
 
     /**
@@ -45,8 +45,8 @@ public class Planeta {
 
         this.radius = Math.cbrt(6*Math.abs(weight)/Math.PI)/2;
 
-        this.velocityMap = new TreeMap<>();
-        this.positionMap = new TreeMap<>();
+        this.oldPlanetMap = new TreeMap<>();
+        this.oldPositionList = new ArrayList<>();
      }
 
     /**
@@ -190,7 +190,7 @@ public class Planeta {
     }
 
     /**
-     * Přidá záznamy do map rychlosti a pozice
+     * Přidá záznamy do mapy
      * převede rychlost na skalár s jednotkama v km/h
      * poslední pozice se bere jako levý horní roh pro budoucí vykreslení
      * @param time čas v ms
@@ -200,30 +200,26 @@ public class Planeta {
         lastVelocity = Math.sqrt(getVelocityX() * getVelocityX() + getVelocityY() * getVelocityY()) * 3.6;
         lastPosition = new DoubleVector2D(getNegativeRadiusX(), getNegativeRadiusY());
 
-        velocityMap.put(lastTime, lastVelocity);
-        positionMap.put(lastTime, lastPosition);
+        oldPlanetMap.put(lastTime, new OldPlanetTraits(lastVelocity, lastPosition));
 
-        if(velocityMap.lastKey() - velocityMap.firstKey() > 30000){
-            velocityMap.remove(velocityMap.firstKey());
+        if(oldPlanetMap.lastKey() - oldPlanetMap.firstKey() > 30000){
+            oldPlanetMap.pollFirstEntry();
         }
 
-        if(positionMap.lastKey() - positionMap.firstKey() > 1000){
-            positionMap.remove(positionMap.firstKey());
-        }
+        oldPositionList = oldPlanetMap.entrySet().stream()
+                .filter(a -> (oldPlanetMap.lastKey() - a.getKey() <= 1000))
+                .map(e -> e.getValue().getOldPosition()).collect(Collectors.toList());
+    }
+
+    public List<DoubleVector2D> getOldPositionList(){
+        return oldPositionList;
     }
 
     /**
-     * @return mapa rychlostí
+     * @return mapa starých atributů
      */
-    public TreeMap<Long, Double> getVelociyMap(){
-        return velocityMap;
-    }
-
-    /**
-     * @return mapa pozic
-     */
-    public TreeMap<Long, DoubleVector2D> getPositionMap(){
-        return positionMap;
+    public TreeMap<Long, OldPlanetTraits> getOldPlanetMap(){
+        return oldPlanetMap;
     }
 
     /**

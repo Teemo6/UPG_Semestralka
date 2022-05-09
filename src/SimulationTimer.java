@@ -17,7 +17,6 @@ public class SimulationTimer {
     private long pause;
     private long allPauses;
 
-    //private boolean simulationRunning = true;
     public static boolean simulationRunning = true;
 
     /**
@@ -36,7 +35,7 @@ public class SimulationTimer {
             @Override
             public void run() {
                 currentTime = System.currentTimeMillis();
-                simulace.updateVelocityMap(currentTime - startTime);
+                simulace.updateOldPlanetMap(currentTime - startTime);
 
                 if(simulationRunning){
                     pause = endPauseTime - startPauseTime;

@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.*;
 
 /**
@@ -20,6 +21,7 @@ public class Vizualizace extends JPanel {
 	// Všechno potřebné na planety
 	private final List<Planeta> planetList;
 	private final Map<Planeta, Ellipse2D> planetMap;
+	private final Map<Planeta, List<Ellipse2D>> planetTrajectory;
 	private Planeta selectedPlanet;
 
 	// Všechno potřebné na scaling
@@ -36,6 +38,7 @@ public class Vizualizace extends JPanel {
 		this.setPreferredSize(new Dimension(800, 600));
 		this.planetList = planetList;
 		planetMap = new HashMap<>(planetList.size());
+		planetTrajectory = new HashMap<>(planetList.size());
 		updatePlanetMap();
 		computeSpaceBorder();
 	}
@@ -86,7 +89,7 @@ public class Vizualizace extends JPanel {
 		miniTransform = g2.getTransform();
 
 		// Trajektorie
-		g2.setColor(new Color(70, 70, 70));
+		g2.setColor(new Color(70, 70, 70, 20));
 		drawTrajectory(g2);
 
 		// Vykresleni planet
@@ -161,7 +164,17 @@ public class Vizualizace extends JPanel {
 	}
 
 	public void drawTrajectory(Graphics2D g2){
-		planetList.forEach(p -> p.getPositionMap().forEach((t, e) -> g2.fill(new Ellipse2D.Double(e.getX(), e.getY(), 2 * p.getRadius(), 2 * p.getRadius()))));
+			planetList.forEach(p -> {
+				p.getOldPositionList().forEach(e -> {
+					Ellipse2D ell;
+					if (2 * p.getRadius() * scale < MINIMAL_PLANET_SIZE) {
+						ell = new Ellipse2D.Double(e.getX() - (MINIMAL_PLANET_SIZE / 2 * scale), e.getY() - (MINIMAL_PLANET_SIZE / 2 * scale), MINIMAL_PLANET_SIZE / scale, MINIMAL_PLANET_SIZE / scale);
+					} else {
+						ell = new Ellipse2D.Double(e.getX(), e.getY(), 2 * p.getRadius(), 2 * p.getRadius());
+					}
+					g2.fill(ell);
+				});
+			});
 	}
 
 	/**
@@ -173,7 +186,7 @@ public class Vizualizace extends JPanel {
 		for(Planeta p : planetList){
 			Ellipse2D e;
 			if(2*p.getRadius() * scale < MINIMAL_PLANET_SIZE){
-				e = new Ellipse2D.Double(p.getPositionX() - (MINIMAL_PLANET_SIZE/2)/scale, p.getPositionY() - (MINIMAL_PLANET_SIZE/2)/scale, MINIMAL_PLANET_SIZE/scale, MINIMAL_PLANET_SIZE/scale);
+				e = new Ellipse2D.Double(p.getPositionX() - (MINIMAL_PLANET_SIZE/2*scale), p.getPositionY() - (MINIMAL_PLANET_SIZE/2*scale), MINIMAL_PLANET_SIZE/scale, MINIMAL_PLANET_SIZE/scale);
 			} else {
 				e = new Ellipse2D.Double(p.getNegativeRadiusX(), p.getNegativeRadiusY(), 2 * p.getRadius(), 2 * p.getRadius());
 			}

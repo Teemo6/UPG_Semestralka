@@ -59,7 +59,8 @@ public class Graf {
 
         // Vytvoří graf nashromážděných dat
         XYSeries series = new XYSeries("Rychlost");
-        p.getVelociyMap().forEach((t, v) -> series.add((double)t/1000, v));
+        TreeMap<Long, OldPlanetTraits> mapCopy = (TreeMap<Long, OldPlanetTraits>) p.getOldPlanetMap().clone();
+        mapCopy.forEach((t, v) -> {if (mapCopy.lastKey() - t <= 30000) series.add(t / 1000.0, v.getOldVelocity());});
         XYSeriesCollection dataset = new XYSeriesCollection(series);
 
         JFreeChart chart = ChartFactory.createXYLineChart(
@@ -76,14 +77,13 @@ public class Graf {
         plotTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (series.getItemCount() < p.getVelociyMap().size()) {
-                    series.add((double) p.getLastTime() / 1000, p.getLastVelocity());
-                    if(series.getMaxX() - series.getMinX() > 30) {
+                SwingUtilities.invokeLater(() -> {
+                     series.add(p.getLastTime() / 1000.0, p.getLastVelocity());
+                     if(series.getMaxX() - series.getMinX() > 30) {
                         series.remove(0);
                     }
-                }
-            }
-        }, 0, 20);
+                });
+            }}, 0, 20);
 
         // Stylování grafu
         chart.setBackgroundPaint(Color.LIGHT_GRAY);

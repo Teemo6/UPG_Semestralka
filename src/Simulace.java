@@ -120,7 +120,7 @@ public class Simulace {
      * Projde všechny planety a uloží jim rychlost s časem do mapy
      * @param time čas od začátku simulace v ms
      */
-    public void updateVelocityMap(Long time){
+    public void updateOldPlanetMap(Long time){
         seznamPlanet.forEach(p -> p.addRecordToMap(time));
     }
 }

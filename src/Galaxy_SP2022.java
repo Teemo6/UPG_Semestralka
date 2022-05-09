@@ -1,5 +1,3 @@
-import org.jfree.chart.JFreeChart;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -15,7 +13,7 @@ import java.awt.event.MouseEvent;
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut
-	private static final String VSTUP_SOUBORU = "data/collision2.csv";
+	private static final String VSTUP_SOUBORU = "data/random500.csv";
 
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
@@ -61,9 +59,8 @@ public class Galaxy_SP2022 {
 				// Pravé kliknutí
 				if(SwingUtilities.isRightMouseButton(e)){
 					Planeta planetHit = vizualizaceVesmiru.getPlanetHit(e.getX(), e.getY());
-					if(planetHit != null){
-						Graf.vytvorOknoGrafu(planetHit);
-					}
+					if(planetHit != null) Graf.vytvorOknoGrafu(planetHit);
+					vizualizaceVesmiru.repaint();
 				}
 			}
 
