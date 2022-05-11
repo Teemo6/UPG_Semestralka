@@ -25,7 +25,7 @@ public class Graf {
 
     /**
      * Vytvoří graf rychlosti v novém okně
-     * @param planeta planeta kterou zobrazujeme
+     * @param planeta zobrazovaná planeta
      */
     public static void vytvorOknoGrafu(Planeta planeta){
         if(grafyPlanet.contains(planeta)){

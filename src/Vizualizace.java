@@ -2,13 +2,12 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.swing.*;
 
 /**
  * Instance třídy {@code Vizualizace} představuje plátno na kreslení vesmíru
- * @author Štěpán Faragula 10-04-2022
- * @version 1.21
+ * @author Štěpán Faragula 10-05-2022
+ * @version 1.30
  */
 public class Vizualizace extends JPanel {
 
@@ -21,7 +20,6 @@ public class Vizualizace extends JPanel {
 	// Všechno potřebné na planety
 	private final List<Planeta> planetList;
 	private final Map<Planeta, Ellipse2D> planetMap;
-	private final Map<Planeta, List<Ellipse2D>> planetTrajectory;
 	private Planeta selectedPlanet;
 
 	// Všechno potřebné na scaling
@@ -38,7 +36,6 @@ public class Vizualizace extends JPanel {
 		this.setPreferredSize(new Dimension(800, 600));
 		this.planetList = planetList;
 		planetMap = new HashMap<>(planetList.size());
-		planetTrajectory = new HashMap<>(planetList.size());
 		updatePlanetMap();
 		computeSpaceBorder();
 	}
@@ -89,7 +86,7 @@ public class Vizualizace extends JPanel {
 		miniTransform = g2.getTransform();
 
 		// Trajektorie
-		g2.setColor(new Color(70, 70, 70, 20));
+		g2.setColor(new Color(50, 50, 50, 50));
 		drawTrajectory(g2);
 
 		// Vykresleni planet
@@ -100,7 +97,7 @@ public class Vizualizace extends JPanel {
 		// Vykresleni oznacene planety
 		checkSelectionOnCollision();
 		if(selectedPlanet != null) {
-			g2.setColor(Color.GRAY);
+			g2.setColor(Color.RED);
 			g2.fill(planetMap.get(selectedPlanet));
 		}
 
@@ -156,25 +153,42 @@ public class Vizualizace extends JPanel {
 	}
 
 	/**
-	 * Vykreslí všechny planety na plátno
+	 * Vykreslí planety
 	 * @param g2 kreslítko
 	 */
 	public void drawPlanets(Graphics2D g2){
 		planetMap.forEach((p, e) -> g2.fill(e));
 	}
 
+	/**
+	 * Vykreslí trajektorie planet
+	 * @param g2 kreslítko
+	 */
 	public void drawTrajectory(Graphics2D g2){
-			planetList.forEach(p -> {
-				p.getOldPositionList().forEach(e -> {
-					Ellipse2D ell;
-					if (2 * p.getRadius() * scale < MINIMAL_PLANET_SIZE) {
-						ell = new Ellipse2D.Double(e.getX() - (MINIMAL_PLANET_SIZE / 2 * scale), e.getY() - (MINIMAL_PLANET_SIZE / 2 * scale), MINIMAL_PLANET_SIZE / scale, MINIMAL_PLANET_SIZE / scale);
-					} else {
-						ell = new Ellipse2D.Double(e.getX(), e.getY(), 2 * p.getRadius(), 2 * p.getRadius());
-					}
-					g2.fill(ell);
-				});
+		ArrayList<Planeta> planetListCopy = (ArrayList<Planeta>) ((ArrayList<Planeta>)planetList).clone();
+		planetListCopy.forEach(p -> {
+			int[] reverse = {p.getOldPositionList().size()};
+			int[] order = {0};
+			p.getOldPositionList().forEach(e -> {
+				Ellipse2D ell;
+				if (2 * p.getRadius() * scale < MINIMAL_PLANET_SIZE) {
+					ell = new Ellipse2D.Double(
+							e.getX() - (MINIMAL_PLANET_SIZE / 2 * scale) + (MINIMAL_PLANET_SIZE / 2 * scale) * ((double) reverse[0] / p.getOldPositionList().size()),
+							e.getY() - (MINIMAL_PLANET_SIZE / 2 * scale) + (MINIMAL_PLANET_SIZE / 2 * scale) * ((double) reverse[0] / p.getOldPositionList().size()),
+							(MINIMAL_PLANET_SIZE / scale) * ((double) order[0] / p.getOldPositionList().size()),
+							(MINIMAL_PLANET_SIZE / scale) * ((double) order[0] / p.getOldPositionList().size()));
+				} else {
+					ell = new Ellipse2D.Double(
+							e.getX() + p.getRadius() * ((double) reverse[0] /p.getOldPositionList().size()),
+							e.getY() + p.getRadius() * ((double) reverse[0] / p.getOldPositionList().size()),
+							(2 * p.getRadius()) * ((double) order[0] / p.getOldPositionList().size()),
+							(2 * p.getRadius()) * ((double) order[0] / p.getOldPositionList().size()));
+				}
+				g2.fill(ell);
+				reverse[0]--;
+				order[0]++;
 			});
+		});
 	}
 
 	/**

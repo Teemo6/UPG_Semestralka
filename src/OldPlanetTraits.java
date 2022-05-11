@@ -1,7 +1,7 @@
 /**
  * Instance třídy {@code OldPlanetTraits} představuje přepravku pro uložení potřebných dat k zobrazení grafu a trajektorií
  * @author Štěpán Faragula 09-05-2022
- * @version 1.30
+ * @version 1.29
  */
 public class OldPlanetTraits {
 

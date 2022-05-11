@@ -46,9 +46,8 @@ public class SimulationTimer {
 
                     oldSimulatonTime = newSimulationTime;
                     vizualizace.setSimulationTime(newSimulationTime * (long) casovySkok);
-                    vizualizace.repaint();
-
                 }
+                vizualizace.repaint();
             }
         }, 0, 20);
     }

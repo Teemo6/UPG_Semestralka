@@ -1,13 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
  * Instance třídy {@code Planeta} představuje vesmírné těleso
- * @author Štěpán Faragula 30-04-2022
- * @version 1.24
+ * @author Štěpán Faragula 10-05-2022
+ * @version 1.30
  */
 public class Planeta {
     // Nastavené hodnoty
@@ -207,10 +206,14 @@ public class Planeta {
         }
 
         oldPositionList = oldPlanetMap.entrySet().stream()
-                .filter(a -> (oldPlanetMap.lastKey() - a.getKey() <= 1000))
+                .filter(a -> (oldPlanetMap.lastKey() - a.getKey() <= 1000) && (a.getKey() % 2 == 0))
                 .map(e -> e.getValue().getOldPosition()).collect(Collectors.toList());
     }
 
+    /**
+     * Vrátí poslední pozice planet
+     * @return seznam pozic za poslední 1 sekundu reálného času
+     */
     public List<DoubleVector2D> getOldPositionList(){
         return oldPositionList;
     }

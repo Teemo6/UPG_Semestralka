@@ -9,11 +9,11 @@ import java.awt.event.MouseEvent;
  *
  * vizualizace simulace vesmíru
  * @author Štěpán Faragula 29-04-2022
- * @version 1.22
+ * @version 1.24
  */
 public class Galaxy_SP2022 {
 	// Testovací atribut
-	private static final String VSTUP_SOUBORU = "data/random500.csv";
+	private static final String VSTUP_SOUBORU = "data/pulsar.csv";
 
 	private static final VstupDat VSTUP_DAT = VstupDat.getInstance();
 
